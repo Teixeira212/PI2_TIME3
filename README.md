@@ -11,6 +11,7 @@ gerenciem suas contas e histórico de apostas.
 Tecnologias Utilizadas:
 
 Node.js: Ambiente de execução para JavaScript no lado do servidor.
+
 TypeScript: Superset do JavaScript que adiciona tipagem estática.
 
 
