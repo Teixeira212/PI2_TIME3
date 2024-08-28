@@ -1,6 +1,6 @@
 # Site de Apostas em Eventos Futuros
 
-Este projeto é uma aplicação web para gerenciar e realizar apostas em eventos futuros. Desenvolvido com TypeScript e Node.js.
+Este projeto é uma aplicação web para gerenciar e realizar apostas em eventos futuros.
 
 O Site de Apostas em Eventos Futuros permite que os usuários 
 visualizem uma lista de eventos futuros,
