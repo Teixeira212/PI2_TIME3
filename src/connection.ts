@@ -28,7 +28,7 @@ export namespace ConnectionHandler {
         }
     }
 
-    async function testConnection(connection: OracleDB.Connection) {
+    async function testConnection() {
         console.log('Conectado ao banco de dados.')
     }
 
