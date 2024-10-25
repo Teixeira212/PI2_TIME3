@@ -1,6 +1,7 @@
 import express from "express";
 import {Request, Response, Router} from "express";
 import { AccountsHandler } from "./accounts/accounts";
+import { ConnectionHandler } from "./connection";
 
 const port = 3000; 
 const server = express();
@@ -14,8 +15,10 @@ routes.get('/', (req: Request, res: Response)=>{
     res.send('Acesso não permitido.');
 });
 
-routes.post('/connection',AccountsHandler.connectionHandler);
+// Rotas
+routes.post('/connection', ConnectionHandler.connectionHandler);
 routes.post('/signUp', AccountsHandler.signUpHandler);
+routes.post('/login', AccountsHandler.loginHandler);
 server.use(routes);
 
 server.listen(port, ()=>{
