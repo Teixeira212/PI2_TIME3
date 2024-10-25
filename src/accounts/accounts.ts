@@ -3,14 +3,8 @@ import OracleDB from "oracledb";
 import dotenv from 'dotenv'; 
 dotenv.config();
 
-/*
-    Nampespace que contém tudo sobre "contas de usuários"
-*/
 export namespace AccountsHandler {
     
-    /**
-     * Tipo UserAccount
-     */
     export type UserAccount = {
         id: number | undefined;
         completeName:string;
@@ -18,7 +12,7 @@ export namespace AccountsHandler {
         password:string | undefined;
     };
 
-    async function login(email: string, password: string) {
+    async function login() {
 
         OracleDB.outFormat = OracleDB.OUT_FORMAT_OBJECT;
 
@@ -30,8 +24,7 @@ export namespace AccountsHandler {
         });
 
         let accouts = await connection.execute(
-            'SELECT * FROM ACCOUNTS WHERE email = :email AND password = :password',
-            [email, password]
+            'SELECT * FROM ACCOUNTS'
         );
 
         await connection.close();
@@ -41,16 +34,8 @@ export namespace AccountsHandler {
 
     export const loginHandler: RequestHandler = 
         async (req: Request, res: Response) => {
-            const pEmail = req.get('email');
-            const pPassword = req.get('password');
-            if(pEmail && pPassword){
-                // chamar a funcao de login. 
-                await login(pEmail, pPassword);
-                res.statusCode = 200;
-                res.send('Login realizado... confira...');
-            } else {
-                res.statusCode = 400;
-                res.send('Requisição inválida - Parâmetros faltando.')
-            }
+            await login();
+            res.statusCode = 200;
+            res.send('Login realizado... confira...');
         }
 }
