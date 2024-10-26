@@ -19,8 +19,9 @@ routes.get('/', (req: Request, res: Response)=>{
 routes.post('/connection', ConnectionHandler.connectionHandler);
 routes.post('/signUp', AccountsHandler.signUpHandler);
 routes.post('/login', AccountsHandler.loginHandler);
+routes.post('/addNewEvent', AccountsHandler.addNewEventHandler);
 server.use(routes);
 
 server.listen(port, ()=>{
-    console.log(`Server is running on: ${port}`);
+    console.log(`Servidor rodando na porta ${port}`);
 })
