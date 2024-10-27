@@ -1,5 +1,7 @@
 import { Request, RequestHandler, Response } from "express";
 import OracleDB from "oracledb";
+import dotenv from 'dotenv';
+dotenv.config()
 
 export namespace ConnectionHandler {
     export async function connectAndExecute(callback: (connection: OracleDB.Connection) => Promise<any>): Promise<any> {

@@ -1,14 +1,13 @@
-import express from "express";
-import {Request, Response, Router} from "express";
+import express, { Request, Response, Router } from "express";
 import { AccountsHandler } from "./accounts/accounts";
 import { ConnectionHandler } from "./connection";
+import { EventsHandler } from "./services/events";
 
 const port = 3000; 
 const server = express();
 const routes = Router();
 
 server.use(express.json())
-
 
 routes.get('/', (req: Request, res: Response)=>{
     res.statusCode = 403;
@@ -19,7 +18,8 @@ routes.get('/', (req: Request, res: Response)=>{
 routes.post('/connection', ConnectionHandler.connectionHandler);
 routes.post('/signUp', AccountsHandler.signUpHandler);
 routes.post('/login', AccountsHandler.loginHandler);
-routes.post('/addNewEvent', AccountsHandler.addNewEventHandler);
+routes.post('/addNewEvent',  AccountsHandler.authHandler, EventsHandler.addNewEventHandler);
+
 server.use(routes);
 
 server.listen(port, ()=>{
