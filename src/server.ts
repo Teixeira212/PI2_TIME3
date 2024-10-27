@@ -19,6 +19,7 @@ routes.post('/connection', ConnectionHandler.connectionHandler);
 routes.post('/signUp', AccountsHandler.signUpHandler);
 routes.post('/login', AccountsHandler.loginHandler);
 routes.post('/addNewEvent',  AccountsHandler.authHandler, EventsHandler.addNewEventHandler);
+routes.post('/getEvents', EventsHandler.getEventsHandler)
 
 server.use(routes);
 
