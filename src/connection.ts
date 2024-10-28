@@ -29,13 +29,4 @@ export namespace ConnectionHandler {
             }
         }
     }
-
-    async function testConnection() {
-        console.log('Conectado ao banco de dados.')
-    }
-
-    export const connectionHandler: RequestHandler = async (req: Request, res: Response) => {
-        await connectAndExecute(testConnection);
-        res.status(200).send('Conexão realizada com sucesso!');
-    }
 }
