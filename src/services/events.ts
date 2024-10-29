@@ -3,20 +3,21 @@ import { ConnectionHandler } from "../connection";
 import OracleDB from "oracledb"
 
 export namespace EventsHandler {
-    // ---------- Funções ----------
+    // ---------- Funções -----------
     async function addNewEvent(connection: OracleDB.Connection, title: string, description: string, quota: number, date_event: string, bet_end: string) {
         let eventInsert = await connection.execute(
-            `INSERT INTO events (event_title, event_description, event_quota, event_date, event_bet_ends, event_status) VALUES (:title, :description, :quota, :date_event, :bet_end, 3)`,
+            `INSERT INTO events (event_title, event_description, event_quota, event_date, event_bet_ends, event_status) VALUES (:title, :description, :quota, :date_event, :bet_end, 1)`,
             [title, description, quota, date_event, bet_end]
         )
         console.log(eventInsert)
         await connection.commit()
     }
 
+    // APRIMORAR PRINT DOS EVENTOS
     async function getEvents(connection: OracleDB.Connection, categorie: string, content: number) {
         if(categorie === 'todas'){
             var selectedEvents = await connection.execute(
-                `select * from events`
+                `select * from events` // 
             )
         } else {
             var selectedEvents = await connection.execute(

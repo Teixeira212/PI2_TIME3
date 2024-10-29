@@ -1,13 +1,13 @@
 import { Request, RequestHandler, Response, NextFunction } from "express";
 import { ConnectionHandler } from "../connection";
 import OracleDB from "oracledb";
-import jwt from 'jsonwebtoken'
+import jwt, { JwtPayload } from 'jsonwebtoken'
 
 export namespace AccountsHandler {
     // ---------- Funções ----------
     async function signUp(connection: OracleDB.Connection, username: string, email: string, password: string, birthdate: string) {
         await connection.execute(
-            `INSERT INTO accounts (username, email, password, birthdate) VALUES (:username, :email, :password, :birthdate)`,
+            `INSERT INTO accounts (username, email, password, birthdate, role) VALUES (:username, :email, :password, :birthdate, 1)`,
             [username, email, password, birthdate]
         )
         await connection.commit()
@@ -83,4 +83,29 @@ export namespace AccountsHandler {
             return
         }
     }
+
+    export const roleHandler: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+        const email = (req.user as JwtPayload)?.email
+    
+        try {
+            await ConnectionHandler.connectAndExecute(async connection => {
+                const result = await connection.execute<{ ROLE: number }>(
+                    `SELECT role AS ROLE FROM accounts WHERE email = :email`,
+                    [email]
+                );
+                console.log(result)
+                const role = result.rows && result.rows[0]?.ROLE;
+                console.log(role)
+    
+                if (role != 2) {
+                    res.status(403).send('Acesso negado. Permissões insuficientes.');
+                    return;
+                }
+    
+                next(); 
+            });
+        } catch (error) {
+            res.status(500).send(`ERRO - ${error}`);
+        }
+    };
 }

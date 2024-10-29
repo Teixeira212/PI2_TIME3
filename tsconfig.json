@@ -16,6 +16,7 @@
 
   "include": [
     "src",
-    "package.json"
+    "package.json",
+    "src/types/global.d.ts"
   ]
 }
