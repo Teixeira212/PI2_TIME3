@@ -14,4 +14,4 @@ Node.js: Ambiente de execução para JavaScript no lado do servidor.
 
 TypeScript: Superset do JavaScript que adiciona tipagem estática.
 
-Oracle: Banco de dados utilizado
+Oracle: Banco de dados utilizado.
