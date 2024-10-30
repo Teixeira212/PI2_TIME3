@@ -1,6 +1,7 @@
 import { Request, RequestHandler, Response } from "express";
 import { ConnectionHandler } from "../connection";
 import OracleDB from "oracledb"
+import { JwtPayload } from 'jsonwebtoken'
 
 export namespace EventsHandler {
     // ---------- Funções ----------
@@ -35,6 +36,33 @@ export namespace EventsHandler {
             [title]
         )
         connection.commit()
+    }
+
+    async function betOnEvent(connection: OracleDB.Connection, event_title: string, email: string, quotas_amount: number, bet_guess: string) {
+        let aux = bet_guess === 'Sim' ? 1 : 2
+        const eventResult = await connection.execute<{ EVENT_ID: number }>(
+            `select event_id from events where event_title = :event_title`, [ event_title ]
+        ) 
+        console.log(eventResult)
+        console.log(event_title)
+        const event_id = eventResult.rows?.[0]?.EVENT_ID;
+        console.log(event_id)
+        if (!event_id) {
+            console.error("Erro: Nenhum ID de evento encontrado para o título fornecido.");
+            return;
+        }
+        console.log(`ID EVENTO: ${event_id}`)
+        const walletResult = await connection.execute<{ WALLET: number }>(
+            `select wallet from accounts where email = :email`, [ email ]
+        )
+        const wallet_id = walletResult.rows?.[0]?.WALLET
+        console.log(`ID WALLET: ${wallet_id}`)
+        await connection.execute(
+          `insert into bets (event_id, wallet_id, quotas_amounts, bet_guess) values (:event_id, :wallet_id, :quotas_amount, :bet_guess)`,
+          [ event_id, wallet_id, quotas_amount, aux ]
+        )
+
+        await connection.commit()
     }
     
     // ---------- Handlers ----------
@@ -74,6 +102,22 @@ export namespace EventsHandler {
                 res.status(200).send(`Evento deletado.`)
             } catch(error) {
                 res.status(500).send(`ERRO - Falha ao deletar evento.\n${error}`)
+            }
+        } else {
+            res.status(400).send(`ERRO - Parâmetros faltando.`)
+        }
+    }
+
+    export const betOnEventHandler: RequestHandler = async (req: Request, res: Response) => {
+        const { event_title, quotas_amount, bet_guess } = req.body
+        const email = (req.user as JwtPayload)?.email
+        console.log(email)
+        if( event_title && quotas_amount && bet_guess ) {
+            try {
+                await ConnectionHandler.connectAndExecute(connection => betOnEvent(connection, event_title, email, quotas_amount, bet_guess))
+                res.status(200).send(`Aposta concluida.`)
+            } catch(error) {
+                res.status(500).send(`ERRO - Falha ao realizar aposta.`)
             }
         } else {
             res.status(400).send(`ERRO - Parâmetros faltando.`)

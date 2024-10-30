@@ -24,6 +24,7 @@ routes.post('/deleteEvent', AccountsHandler.authHandler, EventsHandler.deleteEve
 routes.post('/evaluateNewEvent', AccountsHandler.authHandler, AccountsHandler.roleHandler, ModeratorHandler.evaluateNewEventHandler);
 routes.post('/addFunds', AccountsHandler.authHandler, WalletsHandler.addFundsHandler);
 routes.post('/withdrawFunds', AccountsHandler.authHandler, WalletsHandler.withdrawFundsHandler);
+routes.post('/betOnEvent', AccountsHandler.authHandler, EventsHandler.betOnEventHandler);
 
 server.use(routes);
 
