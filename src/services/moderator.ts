@@ -4,14 +4,14 @@ import OracleDB from "oracledb"
 import { Jwt, JwtPayload } from "jsonwebtoken";
 
 export namespace ModeratorHandler {
-    // ---------- Funções -----------
+    // ---------- Funções ----------
     async function evaluateNewEvent(connection: OracleDB.Connection, id_event: number, evaluation: string) {
         let aux = evaluation === 'Aprovado' ? 2 : 4;
         await connection.execute(
             `update events set event_status = :evaluation where event_id = :id_event`,
             [aux, id_event]
         )
-
+        
         await connection.commit()
     }
 
@@ -28,7 +28,7 @@ export namespace ModeratorHandler {
             await ConnectionHandler.connectAndExecute(connection => evaluateNewEvent(connection, id_event, evaluation))
             res.status(200).send(`Evento Avaliado!`)
         } catch(error) {
-            res.status(500).send(`ERRO - ${error}`)
+            res.status(500).send(`ERRO - Falha ao avaliar evento.\n${error}`)
         }
     }
 

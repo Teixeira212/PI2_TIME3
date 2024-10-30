@@ -3,7 +3,7 @@ import { ConnectionHandler } from "../connection";
 import OracleDB from "oracledb"
 
 export namespace EventsHandler {
-    // ---------- Funções -----------
+    // ---------- Funções ----------
     async function addNewEvent(connection: OracleDB.Connection, title: string, description: string, quota: number, date_event: string, bet_end: string) {
         let eventInsert = await connection.execute(
             `INSERT INTO events (event_title, event_description, event_quota, event_date, event_bet_ends, event_status) VALUES (:title, :description, :quota, :date_event, :bet_end, 1)`,
@@ -54,21 +54,29 @@ export namespace EventsHandler {
 
     export const getEventsHandler: RequestHandler = async (req: Request, res: Response) => {
         const { categorie, content } = req.body
-        try {
-            let foundEvents = await ConnectionHandler.connectAndExecute(connection => getEvents(connection, categorie, content))
-            res.status(200).send(`Eventos encontrados: \n${JSON.stringify(foundEvents)}`)
-        } catch(error) {
-            res.status(500).send(`ERRO - Falha ao pesquisar eventos.\n${error}`)
+        if(categorie && content){
+            try {
+                let foundEvents = await ConnectionHandler.connectAndExecute(connection => getEvents(connection, categorie, content))
+                res.status(200).send(`Eventos encontrados: \n${JSON.stringify(foundEvents)}`)
+            } catch(error) {
+                res.status(500).send(`ERRO - Falha ao pesquisar eventos.\n${error}`)
+            }
+        } else {
+            res.status(400).send(`ERRO - Parâmetros faltando.`)
         }
     }
 
     export const deleteEventHandler: RequestHandler = async (req: Request, res: Response) => {
         const { title } = req.body
-        try {
-            await ConnectionHandler.connectAndExecute(connection => deleteEvent(connection, title))
-            res.status(200).send(`Evento deletado.`)
-        } catch(error) {
-            res.status(500).send(`ERRO - Falha ao deletar evento.\n${error}`)
+        if( title ) {
+            try {
+                await ConnectionHandler.connectAndExecute(connection => deleteEvent(connection, title))
+                res.status(200).send(`Evento deletado.`)
+            } catch(error) {
+                res.status(500).send(`ERRO - Falha ao deletar evento.\n${error}`)
+            }
+        } else {
+            res.status(400).send(`ERRO - Parâmetros faltando.`)
         }
     }
 }

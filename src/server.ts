@@ -2,6 +2,7 @@ import express, { Request, Response, Router } from "express";
 import { AccountsHandler } from "./accounts/accounts";
 import { EventsHandler } from "./services/events";
 import { ModeratorHandler } from "./services/moderator";
+import { WalletsHandler } from "./wallets/wallets";
 
 const port = 3000; 
 const server = express();
@@ -21,6 +22,8 @@ routes.post('/addNewEvent',  AccountsHandler.authHandler, EventsHandler.addNewEv
 routes.post('/getEvents', EventsHandler.getEventsHandler);
 routes.post('/deleteEvent', AccountsHandler.authHandler, EventsHandler.deleteEventHandler);
 routes.post('/evaluateNewEvent', AccountsHandler.authHandler, AccountsHandler.roleHandler, ModeratorHandler.evaluateNewEventHandler);
+routes.post('/addFunds', AccountsHandler.authHandler, WalletsHandler.addFundsHandler);
+routes.post('/withdrawFunds', AccountsHandler.authHandler, WalletsHandler.withdrawFundsHandler);
 
 server.use(routes);
 
