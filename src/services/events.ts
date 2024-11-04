@@ -38,49 +38,61 @@ export namespace EventsHandler {
         connection.commit()
     }
 
-    async function betOnEvent(connection: OracleDB.Connection, event_title: string, email: string, quotas_amount: number, bet_guess: string) {
-        let aux = bet_guess === 'Sim' ? 1 : 2
-        const eventResultRaw = await connection.execute<{ EVENT_ID: number, EVENT_QUOTA: number }>(
-            `select event_id, event_quota from events where event_title = :event_title`, [ event_title ]
-        ) 
-        const eventId = eventResultRaw.rows?.[0]?.EVENT_ID;
-        const eventQuota = eventResultRaw.rows?.[0]?.EVENT_QUOTA;
-        console.log(`EVENT ID: ${eventId}`)
-        console.log(`EVENT QUOTA: ${eventQuota}`)
-        if (!eventId) {
-            console.error("Erro: Nenhum ID de evento encontrado para o título fornecido.");
-            return;
-        }
-        const walletIdRaw = await connection.execute<{ WALLET: number }>(
-            `select wallet from accounts where email = :email`, [ email ]
-        )
-        const walletId = walletIdRaw.rows?.[0]?.WALLET
-        console.log(`WALLET ID: ${walletId}`)
-        const walletBalanceRaw = await connection.execute<{ BALANCE: number }>(
-            `select balance from wallets where wallet_id = :wallet`, [walletId]
-        )
-        const walletBalance = walletBalanceRaw.rows?.[0]?.BALANCE
-        console.log(`WALLET BALANCE: ${walletBalance}`)
-        if(walletBalance && eventQuota){
-            var eventBet = quotas_amount * eventQuota
-            if(walletBalance < eventBet) {
-                console.log(`Saldo insuficiente.`)
-                return false
+    async function betOnEvent(connection: OracleDB.Connection, event_title: string, email: string, quotas_amount: number, bet_guess: string): Promise<boolean> {
+        try {
+            if (typeof quotas_amount !== 'number' || quotas_amount <= 0) {
+                console.log(`Quotas_amount inválido.`);
+                return false;
             }
-        } else {
-            console.log(`walletBalance ou eventQuota = UNDEFINED`)
-            return false
+            const aux = bet_guess === 'Sim' ? 1 : 2;
+            const query = `
+                SELECT e.event_id, e.event_quota, a.wallet, w.balance
+                FROM events e
+                JOIN accounts a ON a.email = :email
+                JOIN wallets w ON w.wallet_id = a.wallet
+                WHERE e.event_title = :event_title
+            `;
+            const result = await connection.execute<{
+                EVENT_ID: number; EVENT_QUOTA: number; WALLET: number; BALANCE: number;
+            }> (query, [email, event_title]);
+    
+            const { EVENT_ID: eventId, EVENT_QUOTA: eventQuota, WALLET: walletId, BALANCE: walletBalance } = result.rows?.[0] || {};
+    
+            if (!eventId || walletId === undefined || walletBalance === undefined || eventQuota === undefined) {
+                console.error("Erro: Dados de evento ou carteira não encontrados.");
+                return false;
+            }
+    
+            console.log(`EVENT ID: ${eventId}, EVENT QUOTA: ${eventQuota}, WALLET ID: ${walletId}, WALLET BALANCE: ${walletBalance}`);
+    
+            const eventBet = quotas_amount * eventQuota;
+            if (walletBalance < eventBet) {
+                console.log(`Saldo insuficiente.`);
+                return false;
+            }
+            await connection.execute(
+                `INSERT INTO bets (event_id, wallet_id, quotas_amounts, bet_guess) VALUES (:event_id, :wallet_id, :quotas_amount, :bet_guess)`,
+                [eventId, walletId, quotas_amount, aux]
+            );
+    
+            await connection.execute(
+                `UPDATE wallets SET balance = balance - :eventBet WHERE wallet_id = :walletId`,
+                [eventBet, walletId]
+            );
+    
+            await connection.commit();
+            console.log(`Aposta realizada com sucesso para o usuário ${email}.`);
+            return true;
+    
+        } catch (error) {
+            console.error(`Erro ao executar a operação de aposta: ${error}`);
+            try {
+                await connection.rollback();
+            } catch (rollbackError) {
+                console.error(`Erro ao fazer rollback: ${rollbackError}`);
+            }
+            return false;
         }
-        await connection.execute(
-          `insert into bets (event_id, wallet_id, quotas_amounts, bet_guess) values (:event_id, :wallet_id, :quotas_amount, :bet_guess)`,
-          [ eventId, walletId, quotas_amount, aux ]
-        )
-        await connection.execute(
-            `UPDATE wallets SET balance = balance - :eventBet WHERE wallet_id = :walletId`,
-            [ eventBet, walletId ]
-        )
-        await connection.commit()
-        return true
     }
     
     // ---------- Handlers ----------
@@ -127,18 +139,25 @@ export namespace EventsHandler {
     }
 
     export const betOnEventHandler: RequestHandler = async (req: Request, res: Response) => {
-        const { event_title, quotas_amount, bet_guess } = req.body
-        const email = (req.user as JwtPayload)?.email
-        console.log(email)
-        if( event_title && quotas_amount && bet_guess ) {
-            let betSucess = await ConnectionHandler.connectAndExecute(connection => betOnEvent(connection, event_title, email, quotas_amount, bet_guess))
-            if(betSucess) {
-                res.status(200).send(`Aposta concluida.`)
-            } else {
-                res.status(500).send(`ERRO - Falha ao realizar aposta.`)
-            }
-        } else {
-            res.status(400).send(`ERRO - Parâmetros faltando.`)
+        const { event_title, quotas_amount, bet_guess } = req.body;
+        const email = (req.user as JwtPayload)?.email;
+        console.log(`Usuário autenticado: ${email}`);
+    
+        if (!event_title || !quotas_amount || !bet_guess) {
+            res.status(400).send(`ERRO - Parâmetros faltando.`);
+            return;
         }
-    }
+        try {
+            const betSuccess = await ConnectionHandler.connectAndExecute(connection => betOnEvent(connection, event_title, email, quotas_amount, bet_guess));
+    
+            if (betSuccess) {
+                res.status(200).send(`Aposta concluída com sucesso.`);
+            } else {
+                res.status(500).send(`ERRO - Falha ao realizar aposta. Verifique o saldo ou os detalhes da aposta.`);
+            }
+        } catch (error) {
+            console.error(`Erro no handler de aposta: ${error}`);
+            res.status(500).send(`ERRO - Ocorreu um problema interno.`);
+        }
+    };
 }
