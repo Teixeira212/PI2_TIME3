@@ -40,29 +40,47 @@ export namespace EventsHandler {
 
     async function betOnEvent(connection: OracleDB.Connection, event_title: string, email: string, quotas_amount: number, bet_guess: string) {
         let aux = bet_guess === 'Sim' ? 1 : 2
-        const eventResult = await connection.execute<{ EVENT_ID: number }>(
-            `select event_id from events where event_title = :event_title`, [ event_title ]
+        const eventResultRaw = await connection.execute<{ EVENT_ID: number, EVENT_QUOTA: number }>(
+            `select event_id, event_quota from events where event_title = :event_title`, [ event_title ]
         ) 
-        console.log(eventResult)
-        console.log(event_title)
-        const event_id = eventResult.rows?.[0]?.EVENT_ID;
-        console.log(event_id)
-        if (!event_id) {
+        const eventId = eventResultRaw.rows?.[0]?.EVENT_ID;
+        const eventQuota = eventResultRaw.rows?.[0]?.EVENT_QUOTA;
+        console.log(`EVENT ID: ${eventId}`)
+        console.log(`EVENT QUOTA: ${eventQuota}`)
+        if (!eventId) {
             console.error("Erro: Nenhum ID de evento encontrado para o título fornecido.");
             return;
         }
-        console.log(`ID EVENTO: ${event_id}`)
-        const walletResult = await connection.execute<{ WALLET: number }>(
+        const walletIdRaw = await connection.execute<{ WALLET: number }>(
             `select wallet from accounts where email = :email`, [ email ]
         )
-        const wallet_id = walletResult.rows?.[0]?.WALLET
-        console.log(`ID WALLET: ${wallet_id}`)
+        const walletId = walletIdRaw.rows?.[0]?.WALLET
+        console.log(`WALLET ID: ${walletId}`)
+        const walletBalanceRaw = await connection.execute<{ BALANCE: number }>(
+            `select balance from wallets where wallet_id = :wallet`, [walletId]
+        )
+        const walletBalance = walletBalanceRaw.rows?.[0]?.BALANCE
+        console.log(`WALLET BALANCE: ${walletBalance}`)
+        if(walletBalance && eventQuota){
+            var eventBet = quotas_amount * eventQuota
+            if(walletBalance < eventBet) {
+                console.log(`Saldo insuficiente.`)
+                return false
+            }
+        } else {
+            console.log(`walletBalance ou eventQuota = UNDEFINED`)
+            return false
+        }
         await connection.execute(
           `insert into bets (event_id, wallet_id, quotas_amounts, bet_guess) values (:event_id, :wallet_id, :quotas_amount, :bet_guess)`,
-          [ event_id, wallet_id, quotas_amount, aux ]
+          [ eventId, walletId, quotas_amount, aux ]
         )
-
+        await connection.execute(
+            `UPDATE wallets SET balance = balance - :eventBet WHERE wallet_id = :walletId`,
+            [ eventBet, walletId ]
+        )
         await connection.commit()
+        return true
     }
     
     // ---------- Handlers ----------
@@ -113,10 +131,10 @@ export namespace EventsHandler {
         const email = (req.user as JwtPayload)?.email
         console.log(email)
         if( event_title && quotas_amount && bet_guess ) {
-            try {
-                await ConnectionHandler.connectAndExecute(connection => betOnEvent(connection, event_title, email, quotas_amount, bet_guess))
+            let betSucess = await ConnectionHandler.connectAndExecute(connection => betOnEvent(connection, event_title, email, quotas_amount, bet_guess))
+            if(betSucess) {
                 res.status(200).send(`Aposta concluida.`)
-            } catch(error) {
+            } else {
                 res.status(500).send(`ERRO - Falha ao realizar aposta.`)
             }
         } else {
