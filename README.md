@@ -15,3 +15,7 @@ Node.js: Ambiente de execução para JavaScript no lado do servidor.
 TypeScript: Superset do JavaScript que adiciona tipagem estática.
 
 Oracle: Banco de dados utilizado.
+
+Instruções: 
+- No terminal, utilize o comando "npm i" para instalar as dependencias necessárias;
+- É necessário inicializar o banco de dados (criação das tabelas) para utilizar a aplicação. No terminal utilize o comando "npm run setup-db";

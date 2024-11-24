@@ -1,5 +1,5 @@
 import { Request, RequestHandler, Response } from "express";
-import { ConnectionHandler } from "../connection";
+import { ConnectionHandler } from "../database/connection";
 import OracleDB from "oracledb";
 import { JwtPayload } from 'jsonwebtoken'
 

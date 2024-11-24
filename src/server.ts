@@ -3,6 +3,7 @@ import { AccountsHandler } from "./accounts/accounts";
 import { EventsHandler } from "./services/events";
 import { ModeratorHandler } from "./services/moderator";
 import { WalletsHandler } from "./wallets/wallets";
+import { testHandler } from "./tests";
 
 const port = 3000; 
 const server = express();
@@ -25,6 +26,8 @@ routes.post('/evaluateNewEvent', AccountsHandler.authHandler, AccountsHandler.ro
 routes.post('/addFunds', AccountsHandler.authHandler, WalletsHandler.addFundsHandler);
 routes.post('/withdrawFunds', AccountsHandler.authHandler, WalletsHandler.withdrawFundsHandler);
 routes.post('/betOnEvent', AccountsHandler.authHandler, EventsHandler.betOnEventHandler);
+routes.post('/finishEvent', AccountsHandler.authHandler, AccountsHandler.roleHandler, ModeratorHandler.finishEventHandler);
+routes.post('/test', testHandler.userTestHandler)
 
 server.use(routes);
 

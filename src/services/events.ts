@@ -1,5 +1,5 @@
 import { Request, RequestHandler, Response } from "express";
-import { ConnectionHandler } from "../connection";
+import { ConnectionHandler } from "../database/connection";
 import OracleDB from "oracledb"
 import { JwtPayload } from 'jsonwebtoken'
 
@@ -10,7 +10,6 @@ export namespace EventsHandler {
             `INSERT INTO events (event_title, event_description, event_quota, event_date, event_bet_ends, event_status) VALUES (:title, :description, :quota, :date_event, :bet_end, 1)`,
             [title, description, quota, date_event, bet_end]
         )
-        console.log(eventInsert)
         await connection.commit()
     }
 
@@ -93,6 +92,9 @@ export namespace EventsHandler {
             }
             return false;
         }
+    }
+    async function searchEvent(connection: OracleDB.Connection) {
+        
     }
     
     // ---------- Handlers ----------

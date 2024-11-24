@@ -1,4 +1,3 @@
-import { Request, RequestHandler, Response } from "express";
 import OracleDB from "oracledb";
 import dotenv from 'dotenv';
 dotenv.config()
@@ -10,19 +9,21 @@ export namespace ConnectionHandler {
 
         try {
             connection = await OracleDB.getConnection({
-                user: process.env.ORACLE_USER,
-                password: process.env.ORACLE_PASSWORD,
-                connectString: process.env.ORACLE_CONN_STR
+                user: process.env.USER,
+                password: process.env.PASSWORD,
+                connectString: process.env.CONN_STR
             });
+            console.log('Conectado com sucesso.')
 
             return await callback(connection); // Executa a função passada por parâmetro
 
         } catch (error) {
             console.error('Erro na operação:', error);
-        } finally { // Fecha a conexão
+        } finally {
             if (connection) {
                 try {
                     await connection.close();
+                    console.log('Conexão fechada com sucesso')
                 } catch (closeError) {
                     console.error('Erro ao fechar conexão:', closeError);
                 }

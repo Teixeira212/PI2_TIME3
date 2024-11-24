@@ -1,11 +1,12 @@
 import { Request, RequestHandler, Response, NextFunction } from "express"
-import { ConnectionHandler } from "../connection"
+import { ConnectionHandler } from "../database/connection"
 import OracleDB from "oracledb"
 import jwt, { JwtPayload } from 'jsonwebtoken'
 
 export namespace AccountsHandler {
     // ---------- Funções ----------
     async function signUp(connection: OracleDB.Connection, username: string, email: string, password: string, birthdate: string) {
+        
         const walletResult = await connection.execute(
             `INSERT INTO wallets (balance) VALUES (0) RETURNING wallet_id INTO :walletId`,
             { walletId: { type: OracleDB.NUMBER, dir: OracleDB.BIND_OUT } }
