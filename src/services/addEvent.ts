@@ -1,34 +1,31 @@
+import { ConnectionHandler } from '../database/connection';
 import { Event } from "../models/Event";
+import { parse } from 'date-fns';
 import OracleDB from "oracledb";
-import jwt from "jsonwebtoken"
-
-type JwtPayLoad = {
-    userId: number
-}
-
-[{ "ROLE": "Usuário", "EMAIL": "email@gmail.com" }] 
+import { auth } from '../microServices/auth';
 
 export const addEvent = async (connection: OracleDB.Connection, event: Event, token: string): Promise<{ success: boolean; error?: string; }> => {
     try {
-        const { userId } = jwt.verify(token, process.env.JWT_PASS ?? '') as JwtPayLoad
-        console.log("ID recebido no token: ", userId)
-
-        const getUser: any = await connection.execute(
-            `SELECT COUNT(*), role FROM accounts WHERE id = :userId GROUP BY role`, [userId]
-        )
-        const role = getUser.rows[0]['ROLE']
-        if (role === 'Moderador') {
-            return { success: false, error: 'Moderadores não podem criar eventos.' }
+        let authResult = await ConnectionHandler.connectAndExecute(connection => auth(connection, token))
+        if (!authResult.success) {
+            return { success: false, error: authResult.error }
         }
-        if (getUser.rows[0]['COUNT(*)'] < 1) {
-            return { success: false, error: 'Token Inválido. Faça login novamente.'}
+        const userId = authResult.userId;
+        const isMod = authResult.isMod;
+        if (isMod) {
+            return { success: false, error: "Não é possível criar evento como Moderador" }
         }
 
         if (!event.title || !event.description || !event.quota_value || !event.event_date || !event.event_bet_ends) {
             return { success: false, error: "Campos faltando." };
         }
-        const eventDate = new Date(event.event_date)
-        const eventBetEnds = new Date(event.event_bet_ends)
+
+        if (event.quota_value < 1) {
+            return { success: false, error: "Valor mínimo da cota: R$1"}
+        }
+
+        const eventDate = parse(event.event_date, "dd/MM/yyyy", new Date())
+        const eventBetEnds = parse(event.event_bet_ends, "dd/MM/yyyy", new Date())
         const todaysDate = new Date()
         if (eventDate <= todaysDate) {
             return { success: false, error: "O evento deve acontecer em uma data posterior a data atual."}

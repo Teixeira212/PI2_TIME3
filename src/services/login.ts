@@ -24,6 +24,6 @@ export const login = async (connection: OracleDB.Connection, user: User): Promis
         return { success: true, token: token }
     } catch (error: unknown) {
         console.error("Erro... : ", error);
-        return { success: false, error: "Erro desconhecido..." };
+        return { success: false, error: "Dados de login inválidos, tente novamente." };
     }
 };

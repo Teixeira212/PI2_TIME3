@@ -1,4 +1,5 @@
 import { User } from "../models/Account";
+import { parse } from 'date-fns';
 import OracleDB from "oracledb";
 
 export const createUser = async (connection: OracleDB.Connection, user: User): Promise<{ success: boolean; error?: string }> => {
@@ -22,10 +23,14 @@ export const createUser = async (connection: OracleDB.Connection, user: User): P
         if(birthdate === null) {
             return { success: false, error: "Data de nascimento inválida."}
         }
-
-        if (new Date().getFullYear() - new Date(birthdate).getFullYear() < 18) {
+        const dateOfBirth = parse(user.birthdate, "dd/MM/yyyy", new Date())
+        const todaysDate = new Date()
+        console.log(dateOfBirth)
+        console.log(todaysDate)
+        if ((todaysDate.getFullYear() - dateOfBirth.getFullYear()) < 18) {
             return { success: false, error: "Plataforma proibida para menores de 18 anos."}
         }
+        
 
         const insertQuery = await connection.execute(
             `INSERT INTO accounts (username, email, password, birthdate, role) VALUES (:username, :email, :password, TO_DATE(:birthdate, 'DD/MM/YYYY'), 'Usuário') RETURNING id INTO :id`,
