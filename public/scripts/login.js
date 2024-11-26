@@ -22,6 +22,7 @@ document.getElementById("loginForm").addEventListener("submit", async (event) =>
             messageElement.textContent = "Login realizado com sucesso!";
             messageElement.style.color = "green";
             console.log("Token armazenado:", result.token);
+            window.location.href = '/homepage'
         } else {
             messageElement.textContent = result.error || "Erro ao realizar login.";
             messageElement.style.color = "red";

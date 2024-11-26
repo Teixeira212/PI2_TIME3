@@ -1,3 +1,15 @@
+function verifyToken() {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+        window.location.href = "/login";
+        return;
+    }
+}
+
+function logout() {
+    localStorage.clear();
+}
+
 function formatDateInput(input) {
     input.addEventListener('input', function () {
         let value = input.value.replace(/\D/g, '');
@@ -19,11 +31,13 @@ function formatToDateString(dateString) {
     return `${dateParts[0]}/${dateParts[1]}/${dateParts[2]}`;
 }
 
+// ----------------------------------------------------------------------
+
 document.addEventListener("DOMContentLoaded", async () => {
     const form = document.getElementById("addEventForm");
     const messageElement = document.getElementById("message");
 
-    document.getElementById("addEventForm").addEventListener("submit", async (event) => {
+    document.getElementById("saveEventBtn").addEventListener("click", async (event) => {
         event.preventDefault();
 
         const token = localStorage.getItem("authToken");
@@ -37,6 +51,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         const quota_value = document.getElementById("quota_value").value;
         const event_date = document.getElementById("event_date").value;
         const event_bet_ends = document.getElementById("event_bet_ends").value;
+
+        if (!title || !description || !quota_value || !event_date || !event_bet_ends) {
+            alert('Por favor, preencha todos os campos.');
+            return;
+        }
 
         try {
             const response = await fetch("/event/addEvent", {
