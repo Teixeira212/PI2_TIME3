@@ -20,5 +20,10 @@
     "quota_value": "00.00",
     "event_date": "01/01/0001",
     "event_bet_ends": "01/01/0001"
+},
+
+"deleteEvent | /event/deleteEvent":
+{
+    "title": ""
 }
 }

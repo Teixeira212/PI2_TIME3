@@ -19,7 +19,7 @@ export const login = async (connection: OracleDB.Connection, user: User): Promis
         }
 
         const token = jwt.sign({ userId: id }, process.env.JWT_PASS ?? '', { expiresIn: '8h' })
-        console.log(token)
+        console.log('Token gerado: ', token)
 
         return { success: true, token: token }
     } catch (error: unknown) {

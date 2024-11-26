@@ -1,7 +1,7 @@
 import { ConnectionHandler } from '../database/connection';
 import { Event } from "../models/Event";
 import OracleDB from "oracledb";
-import { auth } from '../microServices/auth';
+import { auth } from '../microServices/tokenAuth';
 
 export const deleteEvent = async (connection: OracleDB.Connection, event: Event, token: string): Promise<{ success: boolean; error?: string; }> => {
     try {
