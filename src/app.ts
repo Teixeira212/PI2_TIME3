@@ -2,6 +2,7 @@ import deleteEventRoute from "./routes/deleteEventRoute";
 import getEventsRoute from "./routes/getEventsRoute";
 import express, { Request, Response } from "express";
 import tokenAuthRoute from "./routes/tokenAuthRoute";
+import getWalletRoute from "./routes/getWalletRoute";
 import addEventRoute from "./routes/addEventRoute";
 import signUpRoute from "./routes/signUpRoute";
 import loginRoute from "./routes/loginRoute";
@@ -17,13 +18,16 @@ app.use(bodyParser.json());
 
 app.use(express.static(path.join(__dirname, "../public")));
 
+app.use("/auth", tokenAuthRoute);
+
 app.use("/account", signUpRoute);
 app.use("/account", loginRoute);
+app.use("/account", getWalletRoute);
+
 app.use("/event", addEventRoute);
 app.use("/event", deleteEventRoute);
 app.use("/event", getEventsRoute);
 
-app.use("/auth", tokenAuthRoute);
 
 app.get("/homepage", (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, "../public/homepage.html"));
