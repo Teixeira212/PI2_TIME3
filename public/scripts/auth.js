@@ -20,7 +20,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         const result = await response.json();
 
         if (!response.ok) {
-            alert('Erro:', result.error)
             window.location.href = "/login";
         } 
     } catch (error) {
