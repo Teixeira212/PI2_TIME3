@@ -91,11 +91,11 @@
                         <a class="nav-link" href="/login">Login</a>
                     </li>
                     <li class="nav-item register-link" style="display: none;">
-                        <a class="nav-link" href="#">Registrar</a>
+                        <a class="nav-link" href="telaRegistro.html">Registrar</a>
                     </li>
                     <!-- Mostra "Sair" se o usuário estiver logado -->
                     <li class="nav-item sair-link" style="display: none;">
-                        <a onclick="logout()" class="nav-link" href="/homepage">Sair</a>
+                        <a onclick="logout()" class="nav-link" href="#">Sair</a>
                     </li>
                 </ul>
             </div>
@@ -122,8 +122,8 @@
                 </div>
             </div>
             <div class="col col-lg-1">
-                <button onclick="verifyToken()" type="button" class="btn btn-primary" style="float:right;" data-bs-toggle="modal"
-                    data-bs-target="#addNewEventModal">
+                <button onclick="verifyToken()" type="button" class="btn btn-primary" style="float:right;"
+                    data-bs-toggle="modal" data-bs-target="#addNewEventModal">
                     <i class="fas fa-plus"></i> Novo</button>
             </div>
         </div>
@@ -133,8 +133,8 @@
                     <thead>
                         <tr>
                             <th scope="col" class="text-left">Titulo do Evento</th>
-                            <th scope="col" class="text-end">Data do Evento</th>
-                            <th scope="col" class="text-end">Fim das Apostas</th>
+                            <th scope="col" class="text-center">Data do Evento</th>
+                            <th scope="col" class="text-center">Fim das Apostas</th>
                             <th scope="col" class="text-center">Valor da Cota (R$)</th>
                             <th scope="col" class="text-center">Ações</th>
                         </tr>
@@ -216,7 +216,7 @@
                 <div class="modal-body">
                     <p><strong>Nome:</strong> <span id="eventDetailsTitle"></span></p>
                     <p><strong>Descrição:</strong> <span id="eventDetailsDescription"></span></p>
-                    <p><strong>Cota:</strong> R$ <span id="eventDetailsQuota"></span></p>
+                    <p><strong>Cota:</strong> <span id="eventDetailsQuota"></span></p>
                     <p><strong>Data do Evento:</strong> <span id="eventDetailsDate"></span></p>
                     <p><strong>Encerramento das Apostas:</strong> <span id="eventDetailsBetEnds"></span></p>
                 </div>
@@ -305,16 +305,37 @@
             const cellEventDate = row.insertCell(1);
             const cellEventEnd = row.insertCell(2);
             const cellQuotaValue = row.insertCell(3);
+            const cellAction = row.insertCell(4);
 
 
             cellTitle.textContent = event['TITLE'];
             cellEventDate.textContent = formatDate(event['EVENT_DATE']);
             cellEventEnd.textContent = formatDate(event['EVENT_BET_ENDS']);
             cellQuotaValue.textContent = `R$ ${parseFloat(event['QUOTA_VALUE']).toFixed(2)}`;
+
+            const detailsButton = document.createElement('button');
+            detailsButton.classList.add('btn', 'btn-info');
+            detailsButton.textContent = 'Ver Detalhes';
+            detailsButton.addEventListener('click', function () {
+                showEventDetails(event);  
+            });
+
+            cellAction.appendChild(detailsButton);
+
+        }
+        function showEventDetails(event) {
+            
+            document.getElementById('eventDetailsTitle').textContent = event['TITLE'];
+            document.getElementById('eventDetailsDescription').textContent = event['EVENT_DESCRIPTION'];
+            document.getElementById('eventDetailsQuota').textContent = `R$ ${parseFloat(event['QUOTA_VALUE']).toFixed(2)}`;
+            document.getElementById('eventDetailsDate').textContent = formatDate(event['EVENT_DATE']);
+            document.getElementById('eventDetailsBetEnds').textContent = formatDate(event['EVENT_BET_ENDS']);
+
+            const myModal = new bootstrap.Modal(document.getElementById('eventDetailsModal'));
+            myModal.show();
         }
 
 
-    
     </script>
 </body>
 

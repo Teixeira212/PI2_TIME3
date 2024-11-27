@@ -1,5 +1,6 @@
 import deleteEventRoute from "./routes/deleteEventRoute";
 import getEventsRoute from "./routes/getEventsRoute";
+import addFundsRoute from "./routes/addFundsRoute"
 import express, { Request, Response } from "express";
 import tokenAuthRoute from "./routes/tokenAuthRoute";
 import getWalletRoute from "./routes/getWalletRoute";
@@ -23,6 +24,8 @@ app.use("/auth", tokenAuthRoute);
 app.use("/account", signUpRoute);
 app.use("/account", loginRoute);
 app.use("/account", getWalletRoute);
+app.use("/account", addFundsRoute);
+
 
 app.use("/event", addEventRoute);
 app.use("/event", deleteEventRoute);
@@ -31,10 +34,6 @@ app.use("/event", getEventsRoute);
 
 app.get("/homepage", (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, "../public/homepage.html"));
-});
-
-app.get("/events", (req: Request, res: Response) => {
-    res.sendFile(path.join(__dirname, "../public/addEvent.html"));
 });
 
 app.get("/wallet", (req: Request, res: Response) => {

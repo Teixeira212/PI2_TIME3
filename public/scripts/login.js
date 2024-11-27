@@ -6,7 +6,7 @@ document.getElementById("loginForm").addEventListener("submit", async (event) =>
     const messageElement = document.getElementById("message");
     console.log(JSON.stringify({ email, password }))
     try {
-        const response = await fetch("/account/login", {
+        const response = await fetch("http://localhost:3000/account/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
