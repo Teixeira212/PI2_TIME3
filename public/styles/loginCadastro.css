@@ -73,8 +73,8 @@ h1 {
     transition: all 0.5s ease-in-out;
 }
 
-.inputbox input:focus ~ label,
-.inputbox input:valid ~ label {
+.inputbox input:focus~label,
+.inputbox input:valid~label {
     top: -10px;
     left: 5px;
     font-size: 0.85rem;
@@ -145,34 +145,32 @@ button:hover {
     color: #fff;
 }
 
- /* Estilo do ícone para o campo de data  */
+/* Estilo do ícone para o campo de data  */
 .inputbox ion-icon[name="calendar-outline"] {
     position: absolute;
-    right: 6px; 
-    top: 50%; 
-    transform: translateY(-50%); 
-    color: #fff; 
-    font-size: 1.4rem; 
-    cursor: pointer; 
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #fff;
+    font-size: 1.4rem;
+    cursor: pointer;
     pointer-events: none;
 }
 
- /* Estilo do label para o campo de data  */
+/* Estilo do label para o campo de data  */
 .inputbox label[for="birthdate"] {
-    top: -10px; 
+    top: -10px;
     left: 5px;
-    color: #fff; 
+    color: #fff;
     font-size: 0.85rem;
     pointer-events: none;
     transition: all 0.5s ease-in-out;
 }
 
- /* Quando o campo de data estiver preenchido ou focado, o label ficará amarelo  */
-.inputbox input[type="date"]:focus ~ label,
-.inputbox input[type="date"]:valid ~ label {
+/* Quando o campo de data estiver preenchido ou focado, o label ficará amarelo  */
+.inputbox input[type="date"]:focus~label,
+.inputbox input[type="date"]:valid~label {
     color: #ffc107;
     font-size: 0.85rem;
 
 }
-
-
