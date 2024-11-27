@@ -37,6 +37,10 @@ app.get("/events", (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, "../public/addEvent.html"));
 });
 
+app.get("/wallet", (req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, "../public/wallet.html"));
+});
+
 app.get("/login", (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, "../public/login.html"));
 });

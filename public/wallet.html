@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Minha Carteira</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
+    <script src="./scripts/wallet.js" defer></script>
+    <style>
+        body {
+            background-color: #1C1C1C;
+            font-family: Arial, sans-serif;
+            color: #fff;
+        }
+
+        .navbar {
+            background-color: black;
+        }
+
+        .navbar-brand,
+        .navbar-nav .nav-link {
+            color: #fec107;
+        }
+
+        .navbar-brand:hover,
+        .navbar-nav .nav-link:hover {
+            color: #fff;
+        }
+
+        .modal-content {
+            background-color: #1C1C1C;
+            font-family: Arial, sans-serif;
+            color: #fff;
+        }
+
+        .form-text {
+            color: #ffffffa6;
+        }
+
+        .btn {
+            background-color: #fec107;
+            border-color: #fec107;
+            color: black;
+        }
+
+        .btn:hover {
+            background-color: #fec007af;
+            border-color: #fec007af;
+            color: black;
+        }
+
+        .btn-secondary {
+            background-color: #DCDCDC;
+            border-color: #DCDCDC;
+            color: black;
+        }
+
+        .btn-secondary:hover {
+            background-color: #C0C0C0;
+            border-color: #C0C0C0;
+            color: black;
+        }
+
+        .form-control {
+            background-color: #A9A9A9;
+            border-color: #A9A9A9;
+            color: black;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/homepage"><i class="fas fa-dice"></i>TCG.Bet</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/homepage">Eventos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" onclick="logout()" id="sairLink" href="/homepage">Sair</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div id="mainContent" class="container" style="padding-top: 20px;">
+        <div class="row">
+            <div class="col">
+                <h3>Histórico</h3>
+            </div>
+            <div class="col-md-auto">
+                <h5>Saldo: R$<span id="ShowBalance"></span></h5>
+            </div>
+            <div class="col-md-auto">
+                <button type="button" class="btn btn-primary" style="float:right;" data-bs-toggle="modal"
+                    data-bs-target="#addFundsModal">
+                    <i class="fas fa-plus"></i> Adicionar Créditos</button>
+            </div>
+            <div class="col-md-auto">
+                <button type="button" class="btn btn-primary" style="float:right;" data-bs-toggle="modal"
+                    data-bs-target="#withdrawFundsModal">
+                    <i class="fas fa-minus"></i> Saque</button>
+            </div>
+        </div>
+        <div class="row align-items-center">
+            <div class="col">
+                <table id="walletHistory" class="table table-dark">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="text-center">#</th>
+                            <th scope="col" class="text-center">Ação</th>
+                            <th scope="col" class="text-left">Valor R$:</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Transações serão adicionados dinamicamente aqui. 
+                        consultar a função ''
+                        -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="addFundsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <form>
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Depositar</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h5 class="card-title">Preencha os dados do cartão</h5>
+                        <div class="mb-3">
+                            <label for="cardNumberA" class="form-label">número do cartão</label>
+                            <input type="text" class="form-control" id="cardNumberA" placeholder="1234 5678 9012 3456"
+                                maxlength="19" aria-describedby="cardNumberAHelp">
+                        </div>
+                        <div id="cardNumberAHelp" class="form-text">
+                            Informe apenas valores como: 1234567890123456 (sem espaços)
+                        </div>
+                        <div class="mb-3">
+                            <label for="cardNameA" class="form-label">nome no cartão</label>
+                            <input type="text" class="form-control" id="cardNameA" placeholder="Nome Sobrenome">
+                        </div>
+                        <div class="row">
+                            <h6 class="card-title">Validade do cartão</h6>
+                            <div class="col">
+                                <label for="cardExpiryA" class="form-label">data</label>
+                                <input type="text" class="form-control" id="cardExpiryA"
+                                    placeholder="mm/yy">
+                            </div>
+                            <div class="col">
+                                <label for="cardCodeA" class="form-label">CVV</label>
+                                <input type="text" class="form-control" placeholder="cvv" id="cardCodeA" maxlength="3"
+                                    oninput="this.value =this.value.replace(/[^0-9]/g, '')">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <h6>Valor do depósito</h6>
+                            <input type="text" class="form-control w-25" id="depositPrice"
+                                aria-describedby="depositPriceHelp" maxlength="12">
+                            <div id="depositPriceHelp" class="form-text">
+                                Informe apenas valores como exemplo: 10.00, 150.99, 1500.21
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button class="btn btn-primary" id="addFunds">Depositar</button>
+                    </div>
+                </div>
+        </form>
+    </div>
+    </div>
+    <div class="modal fade" id="withdrawFundsModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Sacar</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h5 class="card-title">Preencha os dados do cartão</h5>
+                    <div class="mb-3">
+                        <label for="cardNumberW" class="form-label">número do cartão</label>
+                        <input type="text" class="form-control" id="cardNumberW" placeholder="1234 5678 9012 3456"
+                            maxlength="19" aria-describedby="cardNumberWHelp">
+                    </div>
+                    <div id="cardNumberWHelp" class="form-text">
+                        Informe apenas valores como: 1234567890123456 (sem espaços)
+                    </div>
+                    <div class="mb-3">
+                        <label for="cardNameW" class="form-label">nome no cartão</label>
+                        <input type="text" class="form-control" id="cardNameW" placeholder="Nome Sobrenome">
+                    </div>
+                    <div class="row">
+                        <h6 class="card-title">Validade do cartão</h6>
+                        <div class="col">
+                            <label for="cardExpiryW" class="form-label">Mês</label>
+                            <input type="text" class="form-control" id="cardExpiryW"
+                                placeholder="mm">
+                        </div>
+                        <div class="col">
+                            <label for="cardCodeW" class="form-label">CVV</label>
+                            <input type="text" class="form-control" placeholder="cvv" id="cardCodeW" maxlength="3"
+                                oninput="this.value =this.value.replace(/[^0-9]/g, '')">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <h6>Valor do saque</h6>
+                        <input type="text" class="form-control w-25" id="withdrawFunds"
+                            aria-describedby="withdrawFundseHelp" maxlength="12">
+                        <div id="withdrawFundsHelp" class="form-text">
+                            Informe apenas valores como exemplo: 10.00, 150.99, 1500.21
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-primary" onclick="withdrawFunds()">Sacar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <script>
+        document.getElementById('cardNumberA').addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '').replace(/(\d{4})(?=\d)/g, '$1 ');
+            e.target.value = value;
+        });
+
+        document.getElementById('cardNumberW').addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '').replace(/(\d{4})(?=\d)/g, '$1 ');
+            e.target.value = value;
+        });
+
+        document.getElementById('cardNameA').addEventListener("keypress", function (e) {
+            const keyCode = (e.keyCode ? e.keyCode : e.wich);
+            if (keyCode > 32 && keyCode < 65 || keyCode > 90 && keyCode < 97 || keyCode > 122 && keyCode < 126) {
+                e.preventDefault();
+            }
+        });
+
+        document.getElementById('cardNameW').addEventListener("keypress", function (e) {
+            const keyCode = (e.keyCode ? e.keyCode : e.wich);
+            if (keyCode > 32 && keyCode < 65 || keyCode > 90 && keyCode < 97 || keyCode > 122 && keyCode < 126) {
+                e.preventDefault();
+            }
+        });
+        const inputDep = document.getElementById("depositPrice");
+
+        inputDep.addEventListener("input", function (e) {
+            let value = e.target.value;
+            value = value.replace(/\D/g, "");
+            value = (value / 100).toFixed(2).replace(".", ",");
+            value = "R$ " + value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            e.target.value = value;
+        });
+
+        inputDep.addEventListener("focus", function (e) {
+            if (e.target.value === "") {
+                e.target.value = "R$ 0,00";
+            }
+        });
+
+        inputDep.addEventListener("blur", function (e) {
+            if (e.target.value === "R$ 0,00") {
+                e.target.value = "";
+            }
+        });
+
+        const inputSaq = document.getElementById("withdrawFunds");
+
+        inputSaq.addEventListener("input", function (e) {
+            let value = e.target.value;
+            value = value.replace(/\D/g, "");
+            value = (value / 100).toFixed(2).replace(".", ",");
+            value = "R$ " + value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            e.target.value = value;
+        });
+
+        inputSaq.addEventListener("focus", function (e) {
+            if (e.target.value === "") {
+                e.target.value = "R$ 0,00";
+            }
+        });
+
+        inputSaq.addEventListener("blur", function (e) {
+            if (e.target.value === "R$ 0,00") {
+                e.target.value = "";
+            }
+        });
+        const expiryA = document.getElementById("cardExpiryA");
+        expiryA.addEventListener("input", function (e) {
+            let value = e.target.value;
+
+            // Remove tudo que não for número
+            value = value.replace(/\D/g, "");
+
+            // Adiciona a barra após o mês
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + "/" + value.substring(2, 4);
+            }
+
+            // Limita a entrada ao formato MM/AA
+            value = value.substring(0, 5);
+
+            e.target.value = value;
+        });
+        const ExpiryW = document.getElementById("cardExpiryA");
+        ExpiryW.addEventListener("input", function (e) {
+            let value = e.target.value;
+
+            // Remove tudo que não for número
+            value = value.replace(/\D/g, "");
+
+            // Adiciona a barra após o mês
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + "/" + value.substring(2, 4);
+            }
+
+            // Limita a entrada ao formato MM/AA
+            value = value.substring(0, 5);
+
+            e.target.value = value;
+        });
+    </script>
+</body>
+
+</html>
