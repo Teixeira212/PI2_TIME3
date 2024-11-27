@@ -122,9 +122,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Transações serão adicionados dinamicamente aqui. 
-                        consultar a função ''
-                        -->
+                        <!-- transacoe serão adicionados dinamicamente aqui -->
                     </tbody>
                 </table>
             </div>
@@ -349,15 +347,12 @@
         expiryA.addEventListener("input", function (e) {
             let value = e.target.value;
 
-            // Remove tudo que não for número
             value = value.replace(/\D/g, "");
 
-            // Adiciona a barra após o mês
             if (value.length >= 2) {
                 value = value.substring(0, 2) + "/" + value.substring(2, 4);
             }
 
-            // Limita a entrada ao formato MM/AA
             value = value.substring(0, 5);
 
             e.target.value = value;
@@ -366,15 +361,12 @@
         ExpiryW.addEventListener("input", function (e) {
             let value = e.target.value;
 
-            // Remove tudo que não for número
             value = value.replace(/\D/g, "");
 
-            // Adiciona a barra após o mês
             if (value.length >= 2) {
                 value = value.substring(0, 2) + "/" + value.substring(2, 4);
             }
 
-            // Limita a entrada ao formato MM/AA
             value = value.substring(0, 5);
 
             e.target.value = value;

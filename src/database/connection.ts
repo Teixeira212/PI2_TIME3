@@ -15,7 +15,7 @@ export namespace ConnectionHandler {
             });
             console.log('Conectado com sucesso.')
 
-            return await callback(connection); // Executa a função passada por parâmetro
+            return await callback(connection);
 
         } catch (error) {
             console.error('Erro na operação:', error);

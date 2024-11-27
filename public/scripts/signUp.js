@@ -1,5 +1,5 @@
 document.getElementById("registerForm").addEventListener("submit", async (event) => {
-    event.preventDefault(); // Evita o envio padrão do formulário
+    event.preventDefault();
 
     const username = document.getElementById("username").value;
     const email = document.getElementById("email").value;
@@ -19,7 +19,6 @@ document.getElementById("registerForm").addEventListener("submit", async (event)
         const result = await response.json();
 
         if (response.ok) {
-            // Armazena o token no localStorage
             localStorage.setItem("authToken", result.token);
             messageElement.textContent = "Login realizado com sucesso!";
             messageElement.style.color = "green";

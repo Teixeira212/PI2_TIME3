@@ -4,8 +4,8 @@ export const getEvents = async (connection: OracleDB.Connection): Promise<{ succ
     try {
         const result = await connection.execute(
             `SELECT * FROM events WHERE event_status = 'Aprovado'`,
-            [], // Bind variables (se necessário)
-            { outFormat: OracleDB.OUT_FORMAT_OBJECT } // Retorna como objetos JS
+            [],
+            { outFormat: OracleDB.OUT_FORMAT_OBJECT }
         );
 
         return { success: true, data: result.rows }

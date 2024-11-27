@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", async () => {
 
-    // Obtém o token do localStorage
     const token = localStorage.getItem("authToken");
 
     if (!token) {
