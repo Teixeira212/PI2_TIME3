@@ -84,14 +84,14 @@
                 <ul class="navbar-nav ms-auto">
                     <!-- Mostra "Minha Wallet" se o usuário estiver logado -->
                     <li class="nav-item minha-wallet" style="display: none;">
-                        <a class="nav-link" href="/wallet">Minha Carteira</a>
+                        <a class="nav-link" href="#">Minha Carteira</a>
                     </li>
                     <!-- Mostra os botões de "Login" e "Registrar" se o usuário não estiver logado -->
                     <li class="nav-item login-link" style="display: none;">
                         <a class="nav-link" href="/login">Login</a>
                     </li>
                     <li class="nav-item register-link" style="display: none;">
-                        <a class="nav-link" href="/signUp">Registrar</a>
+                        <a class="nav-link" href="telaRegistro.html">Registrar</a>
                     </li>
                     <!-- Mostra "Sair" se o usuário estiver logado -->
                     <li class="nav-item sair-link" style="display: none;">
@@ -157,7 +157,7 @@
         </div>
     </div>
 
-    <!-- Modal de criação de evento -->
+
     <div class="modal fade" id="addNewEventModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -204,7 +204,7 @@
         </div>
     </div>
 
-    <!-- Modal de detalhes do evento -->
+
     <div class="modal fade" id="eventDetailsModal" tabindex="-1" aria-labelledby="eventDetailsModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
@@ -216,9 +216,33 @@
                 <div class="modal-body">
                     <p><strong>Nome:</strong> <span id="eventDetailsTitle"></span></p>
                     <p><strong>Descrição:</strong> <span id="eventDetailsDescription"></span></p>
-                    <p><strong>Cota:</strong> <span id="eventDetailsQuota"></span></p>
+                    <p><strong>Cota:</strong> R$ <span id="eventDetailsQuota"></span></p>
                     <p><strong>Data do Evento:</strong> <span id="eventDetailsDate"></span></p>
                     <p><strong>Encerramento das Apostas:</strong> <span id="eventDetailsBetEnds"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="betModal" tabindex="-1" aria-labelledby="betModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="betModalLabel">Confirmar Aposta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Quantas cotas você deseja comprar?</p>
+                    <input type="number" id="betQuantity" class="form-control" placeholder="Quantidade de cotas"
+                        min="1">
+                    <p id="totalBetAmount" style="margin-top: 10px;"></p>
+                    <div id="betChoice" style="margin-top: 20px;">
+                        <p>Você acha que o evento irá acontecer?</p>
+                        <button type="button" class="btn btn-success" id="betYes">Sim</button>
+                        <button type="button" class="btn btn-danger" id="betNo">Não</button>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
@@ -235,26 +259,26 @@
         document.addEventListener('DOMContentLoaded', function () {
             const token = localStorage.getItem("authToken");
 
-            // Selecionar os elementos da navbar
+
             const minhaWallet = document.querySelector('.minha-wallet');
             const loginLink = document.querySelector('.login-link');
             const registerLink = document.querySelector('.register-link');
             const sairLink = document.querySelector('.sair-link');
 
             if (token) {
-                // Usuário logado: Mostrar "Minha Wallet" e "Sair"
+
                 minhaWallet.style.display = 'block';
                 loginLink.style.display = 'none';
                 registerLink.style.display = 'none';
                 sairLink.style.display = 'block';
 
-                // Adicionar funcionalidade de "Sair" (remover o token)
+
                 sairLink.addEventListener('click', function () {
-                    localStorage.removeItem('token'); // ou sessionStorage.removeItem('token')
-                    location.reload(); // Recarregar a página para aplicar as mudanças
+                    localStorage.removeItem('token');
+                    location.reload();
                 });
             } else {
-                // Usuário não logado: Mostrar "Login" e "Registrar"
+
                 minhaWallet.style.display = 'none';
                 loginLink.style.display = 'block';
                 registerLink.style.display = 'block';
@@ -287,44 +311,52 @@
         }
 
         function formatDate(dateString) {
-            const date = new Date(dateString); // Converte a string em objeto Date
-            const day = String(date.getDate()).padStart(2, '0'); // Adiciona zero à esquerda, se necessário
-            const month = String(date.getMonth() + 1).padStart(2, '0'); // Meses são base 0
-            const year = date.getFullYear(); // Obtém o ano completo
+            const date = new Date(dateString);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
 
-            return `${day}/${month}/${year}`; // Retorna no formato dd/mm/yyyy
+            return `${day}/${month}/${year}`;
         }
 
         function showEventInTable(event) {
             const table = document.getElementById('tableEvents').getElementsByTagName('tbody')[0];
-            console.log('EVENTO RECEBIDO:', event)
+            console.log('EVENTO RECEBIDO:', event);
             const row = table.insertRow();
-
 
             const cellTitle = row.insertCell(0);
             const cellEventDate = row.insertCell(1);
             const cellEventEnd = row.insertCell(2);
             const cellQuotaValue = row.insertCell(3);
-            const cellAction = row.insertCell(4);
-
+            const cellAction = row.insertCell(4); 
 
             cellTitle.textContent = event['TITLE'];
             cellEventDate.textContent = formatDate(event['EVENT_DATE']);
             cellEventEnd.textContent = formatDate(event['EVENT_BET_ENDS']);
             cellQuotaValue.textContent = `R$ ${parseFloat(event['QUOTA_VALUE']).toFixed(2)}`;
 
+            
             const detailsButton = document.createElement('button');
             detailsButton.classList.add('btn', 'btn-info');
-            detailsButton.textContent = 'Ver Detalhes';
+            detailsButton.textContent = 'Detalhes';
             detailsButton.addEventListener('click', function () {
-                showEventDetails(event);  
+                showEventDetails(event);
+            });
+
+            
+            const betButton = document.createElement('button');
+            betButton.classList.add('btn', 'btn-info');
+            betButton.textContent = 'Bet';
+            betButton.addEventListener('click', function () {
+                showBetModal(event);
             });
 
             cellAction.appendChild(detailsButton);
-
+            cellAction.appendChild(document.createTextNode(' ')); 
+            cellAction.appendChild(betButton);
         }
         function showEventDetails(event) {
-            
+
             document.getElementById('eventDetailsTitle').textContent = event['TITLE'];
             document.getElementById('eventDetailsDescription').textContent = event['EVENT_DESCRIPTION'];
             document.getElementById('eventDetailsQuota').textContent = `R$ ${parseFloat(event['QUOTA_VALUE']).toFixed(2)}`;
@@ -333,6 +365,74 @@
 
             const myModal = new bootstrap.Modal(document.getElementById('eventDetailsModal'));
             myModal.show();
+        }
+
+        function showBetModal(event) {
+
+            const betQuantityInput = document.getElementById('betQuantity');
+            const totalBetAmount = document.getElementById('totalBetAmount');
+            const betYesButton = document.getElementById('betYes');
+            const betNoButton = document.getElementById('betNo');
+
+
+            betQuantityInput.value = '';
+            totalBetAmount.textContent = '';
+
+            betQuantityInput.addEventListener('input', function () {
+                const quantity = parseInt(betQuantityInput.value, 10);
+                if (quantity && quantity > 0) {
+                    const total = quantity * parseFloat(event['QUOTA_VALUE']);
+                    totalBetAmount.textContent = `Valor Total: R$ ${total.toFixed(2)}`;
+                } else {
+                    totalBetAmount.textContent = '';
+                }
+            });
+
+            let userChoice = null;
+            betYesButton.addEventListener('click', function () {
+                userChoice = 'Sim';
+                processBet(event, userChoice);
+            });
+
+            betNoButton.addEventListener('click', function () {
+                userChoice = 'Não';
+                processBet(event, userChoice);
+            });
+
+            const myModal = new bootstrap.Modal(document.getElementById('betModal'));
+            myModal.show();
+        }
+
+        function processBet(event, userChoice) {
+            const betQuantity = parseInt(document.getElementById('betQuantity').value, 10);
+            const totalBet = betQuantity * parseFloat(event['QUOTA_VALUE']);
+
+            // TEM QUE COLOCAR UM SERVIDOR DE VERDADE AQUI É SÓ UMA SIMULAÇÃO
+            // MUDA AQUI QUANDO A ROTA E A TABELA FOREM CRIADOS KKKKKKKKKKKKKKKKKKKK ||||||||||||||||||||||||||||
+            fetch('http://localhost:3000/saveBet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                //ELEMENTOS DE UMA TABELA IMAGINARIA, ISSO AQUI NÃO EXISTE ||||||||||||||||||||||||||||||||
+                body: JSON.stringify({
+                    eventId: event['ID'],
+                    betQuantity,
+                    totalBet,
+                    userChoice
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Aposta registrada com sucesso!');
+
+                    const myModal = new bootstrap.Modal(document.getElementById('betModal'));
+                    myModal.hide();
+                })
+                .catch(error => {
+                    alert('Erro ao registrar aposta!');
+                    console.error(error);
+                });
         }
 
 
