@@ -117,7 +117,7 @@
                     <thead>
                         <tr>
                             <th scope="col" class="text-center">#</th>
-                            <th scope="col" class="text-center">Ação</th>
+                            <th scope="col" class="text-center">Tipo</th>
                             <th scope="col" class="text-left">Valor R$:</th>
                         </tr>
                     </thead>
@@ -131,7 +131,7 @@
         </div>
     </div>
     <div class="modal fade" id="addFundsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <form>
+        <form id="depositForm">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -141,7 +141,7 @@
                     <div class="modal-body">
                         <h5 class="card-title">Preencha os dados do cartão</h5>
                         <div class="mb-3">
-                            <label for="cardNumberA" class="form-label">número do cartão</label>
+                            <label for="cardNumberA" class="form-label">Número do cartão</label>
                             <input type="text" class="form-control" id="cardNumberA" placeholder="1234 5678 9012 3456"
                                 maxlength="19" aria-describedby="cardNumberAHelp">
                         </div>
@@ -156,8 +156,7 @@
                             <h6 class="card-title">Validade do cartão</h6>
                             <div class="col">
                                 <label for="cardExpiryA" class="form-label">data</label>
-                                <input type="text" class="form-control" id="cardExpiryA"
-                                    placeholder="mm/yy">
+                                <input type="text" class="form-control" id="cardExpiryA" placeholder="mm/yy">
                             </div>
                             <div class="col">
                                 <label for="cardCodeA" class="form-label">CVV</label>
@@ -168,12 +167,13 @@
                         <div class="mb-3">
                             <h6>Valor do depósito</h6>
                             <input type="text" class="form-control w-25" id="depositPrice"
-                                aria-describedby="depositPriceHelp" maxlength="12">
+                                aria-describedby="depositPriceHelp" maxlength="12" required>
                             <div id="depositPriceHelp" class="form-text">
                                 Informe apenas valores como exemplo: 10.00, 150.99, 1500.21
                             </div>
                         </div>
                     </div>
+                    <p id="message"></p>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                         <button class="btn btn-primary" id="addFunds">Depositar</button>
@@ -184,54 +184,59 @@
     </div>
     <div class="modal fade" id="withdrawFundsModal" tabindex="-1" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Sacar</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h5 class="card-title">Preencha os dados do cartão</h5>
-                    <div class="mb-3">
-                        <label for="cardNumberW" class="form-label">número do cartão</label>
-                        <input type="text" class="form-control" id="cardNumberW" placeholder="1234 5678 9012 3456"
-                            maxlength="19" aria-describedby="cardNumberWHelp">
+        <form id="withdrawForm">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Sacar</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div id="cardNumberWHelp" class="form-text">
-                        Informe apenas valores como: 1234567890123456 (sem espaços)
-                    </div>
-                    <div class="mb-3">
-                        <label for="cardNameW" class="form-label">nome no cartão</label>
-                        <input type="text" class="form-control" id="cardNameW" placeholder="Nome Sobrenome">
-                    </div>
-                    <div class="row">
-                        <h6 class="card-title">Validade do cartão</h6>
-                        <div class="col">
-                            <label for="cardExpiryW" class="form-label">Mês</label>
-                            <input type="text" class="form-control" id="cardExpiryW"
-                                placeholder="mm">
+                    <div class="modal-body">
+                        <h5 class="card-title">Preencha os dados do cartão</h5>
+                        <div class="mb-3">
+                            <label for="cardNumberW" class="form-label">número do cartão</label>
+                            <input type="text" class="form-control" id="cardNumberW" placeholder="1234 5678 9012 3456"
+                                maxlength="19" aria-describedby="cardNumberWHelp">
                         </div>
-                        <div class="col">
-                            <label for="cardCodeW" class="form-label">CVV</label>
-                            <input type="text" class="form-control" placeholder="cvv" id="cardCodeW" maxlength="3"
-                                oninput="this.value =this.value.replace(/[^0-9]/g, '')">
+                        <div id="cardNumberWHelp" class="form-text">
+                            Informe apenas valores como: 1234567890123456 (sem espaços)
+                        </div>
+                        <div class="mb-3">
+                            <label for="cardNameW" class="form-label">nome no cartão</label>
+                            <input type="text" class="form-control" id="cardNameW" placeholder="Nome Sobrenome">
+                        </div>
+                        <div class="row">
+                            <h6 class="card-title">Validade do cartão</h6>
+                            <div class="col">
+                                <label for="cardExpiryW" class="form-label">Mês</label>
+                                <input type="text" class="form-control" id="cardExpiryW" placeholder="mm">
+                            </div>
+                            <div class="col">
+                                <label for="cardCodeW" class="form-label">CVV</label>
+                                <input type="text" class="form-control" placeholder="cvv" id="cardCodeW" maxlength="3"
+                                    oninput="this.value =this.value.replace(/[^0-9]/g, '')">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <h6>Valor do saque</h6>
+                            <input type="text" class="form-control w-25" id="withdrawValue"
+                                aria-describedby="withdrawFundseHelp" maxlength="12">
+                            <div id="withdrawFundsHelp" class="form-text">
+                                Informe apenas valores como exemplo: 10.00, 150.99, 1500.21
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <h5>Saque após taxas: <span id="showWithDraw"></span></h5>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <h6>Valor do saque</h6>
-                        <input type="text" class="form-control w-25" id="withdrawFunds"
-                            aria-describedby="withdrawFundseHelp" maxlength="12">
-                        <div id="withdrawFundsHelp" class="form-text">
-                            Informe apenas valores como exemplo: 10.00, 150.99, 1500.21
-                        </div>
+                    <p id="messageWithdraw"></p>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button class="btn btn-primary" id="withdrawFunds">Sacar</button>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button class="btn btn-primary" onclick="withdrawFunds()">Sacar</button>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
@@ -282,7 +287,8 @@
             }
         });
 
-        const inputSaq = document.getElementById("withdrawFunds");
+        const inputSaq = document.getElementById("withdrawValue");
+
 
         inputSaq.addEventListener("input", function (e) {
             let value = e.target.value;
@@ -303,7 +309,43 @@
                 e.target.value = "";
             }
         });
+
+        const showWithdraw = document.getElementById("showWithDraw");
+        inputSaq.addEventListener("input", function (e) {
+            let value = e.target.value.replace(/[^\d]/g, "");
+            value = parseFloat(value) / 100;
+            let taxa = 0;
+            if (value <= 100) {
+                taxa = 0.04;
+            } else if (value <= 1000) {
+                taxa = 0.03;
+            } else if (value <= 5000) {
+                taxa = 0.02;
+            } else if (value <= 100000) {
+                taxa = 0.01;
+            } else {
+                taxa = 0;
+            }
+            const valorFinal = value - value * taxa;
+
+            const formatar = (num) =>
+                num.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+            e.target.value = formatar(value);
+            showWithdraw.textContent = formatar(valorFinal);
+        });
+        inputSaq.addEventListener("focus", function (e) {
+            if (e.target.value === "") {
+                e.target.value = "R$ 0,00";
+            }
+        });
+        inputSaq.addEventListener("blur", function (e) {
+            if (e.target.value === "R$ 0,00") {
+                e.target.value = "";
+            }
+        });
+
         const expiryA = document.getElementById("cardExpiryA");
+
         expiryA.addEventListener("input", function (e) {
             let value = e.target.value;
 

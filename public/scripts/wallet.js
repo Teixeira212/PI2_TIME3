@@ -65,3 +65,109 @@ function showWalletHistory(history) {
     cellType.textContent = history['TRANSACTION_TYPE'];
     cellAmount.textContent = `R$${amount.toFixed(2)}`;
 }
+
+// -------------------------------------------------------------------------------------------------
+document.addEventListener("DOMContentLoaded", async () => {
+    const form = document.getElementById("depositForm");
+    const messageElement = document.getElementById("message");
+
+    document.getElementById("addFunds").addEventListener("click", async (event) => {
+        event.preventDefault();
+
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+            window.location.href = "/login";
+            return;
+        }
+        let valorSemPrefixo = document.getElementById("depositPrice").value.replace("R$", "").trim();
+        valorSemPrefixo = valorSemPrefixo.replace(/\./g, "").replace(",", ".");
+        const numeroFloat = parseFloat(valorSemPrefixo);
+
+        console.log(numeroFloat);
+        const amount = numeroFloat;
+
+        if (!amount) {
+            alert('Por favor, preencha todos os campos.');
+            return;
+        }
+
+        try {
+            const response = await fetch("http://localhost:3000/account/addFunds", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+                body: JSON.stringify({ balance: amount }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                messageElement.textContent = result.message || "Fundos adicionados com sucesso!";
+                messageElement.className = "success";
+                form.reset();
+            } else {
+                messageElement.textContent = result.error || "Erro ao adicionar fundos.";
+                messageElement.className = "error";
+            }
+        } catch (error) {
+            console.error("Erro na requisição:", error);
+            messageElement.textContent = "Erro ao conectar-se ao servidor.";
+            messageElement.className = "error";
+        }
+    });
+});
+
+// -------------------------------------------------------------------------------------------------
+document.addEventListener("DOMContentLoaded", async () => {
+    const form = document.getElementById("withdrawForm");
+    const messageElement = document.getElementById("messageWithdraw");
+
+    document.getElementById("withdrawFunds").addEventListener("click", async (event) => {
+        event.preventDefault();
+
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+            window.location.href = "/login";
+            return;
+        }
+        let valorSemPrefixo = document.getElementById("withdrawValue").value.replace("R$", "").trim();
+        valorSemPrefixo = valorSemPrefixo.replace(/\./g, "").replace(",", ".");
+        const numeroFloat = parseFloat(valorSemPrefixo);
+
+        console.log(numeroFloat);
+        const amount = numeroFloat;
+
+        if (!amount) {
+            alert('Por favor, preencha todos os campos.');
+            return;
+        }
+
+        try {
+            const response = await fetch("http://localhost:3000/account/withdrawFunds", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+                body: JSON.stringify({ balance: amount }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                messageElement.textContent = result.message || "Fundos sacados com sucesso!";
+                messageElement.className = "success";
+                form.reset();
+            } else {
+                messageElement.textContent = result.error || "Erro ao sacar fundos.";
+                messageElement.className = "error";
+            }
+        } catch (error) {
+            console.error("Erro na requisição:", error);
+            messageElement.textContent = "Erro ao conectar-se ao servidor.";
+            messageElement.className = "error";
+        }
+    });
+});

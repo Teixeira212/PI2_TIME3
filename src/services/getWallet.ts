@@ -16,7 +16,7 @@ export const getWallet = async (connection: OracleDB.Connection, token: string):
         );
         const walletId = wallet.rows[0]['ID']
         const walletHistory: any = await connection.execute(
-            `SELECT * FROM wallet_history WHERE wallet_id = :walletId`,
+            `SELECT * FROM wallet_history WHERE wallet_id = :walletId ORDER BY id DESC`,
             [walletId], 
             { outFormat: OracleDB.OUT_FORMAT_OBJECT } 
         );

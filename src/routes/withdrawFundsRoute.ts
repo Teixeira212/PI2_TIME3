@@ -1,11 +1,11 @@
 import { ConnectionHandler } from '../database/connection';
-import { addFunds } from '../services/addFunds';
+import { withdrawFunds } from '../services/withdrawFunds';
 import { Wallet } from '../models/Wallet'; 
 import express from 'express';
 
 const router = express.Router();
 
-router.post('/addFunds', async (req, res) => {
+router.post('/withdrawFunds', async (req, res) => {
     const wallet: Wallet = req.body;
     const { authorization } = req.headers
     const token = authorization?.split(' ')[1]
@@ -15,10 +15,10 @@ router.post('/addFunds', async (req, res) => {
     }
 
     try {
-        let result = await ConnectionHandler.connectAndExecute(connection => addFunds(connection, wallet, token))
+        let result = await ConnectionHandler.connectAndExecute(connection => withdrawFunds(connection, wallet, token))
         if (result.success) {
             res.status(201).json({
-                message: `Fundos adicionados com sucesso.`
+                message: `Fundos sacados com sucesso.`
             });
         } else {
             res.status(400).json({ error: result.error })

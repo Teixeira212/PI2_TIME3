@@ -1,6 +1,7 @@
 import deleteEventRoute from "./routes/deleteEventRoute";
 import getEventsRoute from "./routes/getEventsRoute";
 import addFundsRoute from "./routes/addFundsRoute"
+import withdrawFundsRoute from "./routes/withdrawFundsRoute"
 import express, { Request, Response } from "express";
 import tokenAuthRoute from "./routes/tokenAuthRoute";
 import getWalletRoute from "./routes/getWalletRoute";
@@ -25,6 +26,7 @@ app.use("/account", signUpRoute);
 app.use("/account", loginRoute);
 app.use("/account", getWalletRoute);
 app.use("/account", addFundsRoute);
+app.use("/account", withdrawFundsRoute);
 
 
 app.use("/event", addEventRoute);
