@@ -84,14 +84,14 @@
                 <ul class="navbar-nav ms-auto">
                     <!-- Mostra "Minha Wallet" se o usuário estiver logado -->
                     <li class="nav-item minha-wallet" style="display: none;">
-                        <a class="nav-link" href="#">Minha Carteira</a>
+                        <a class="nav-link" href="/wallet">Minha Carteira</a>
                     </li>
                     <!-- Mostra os botões de "Login" e "Registrar" se o usuário não estiver logado -->
                     <li class="nav-item login-link" style="display: none;">
                         <a class="nav-link" href="/login">Login</a>
                     </li>
                     <li class="nav-item register-link" style="display: none;">
-                        <a class="nav-link" href="telaRegistro.html">Registrar</a>
+                        <a class="nav-link" href="/signUp">Registrar</a>
                     </li>
                     <!-- Mostra "Sair" se o usuário estiver logado -->
                     <li class="nav-item sair-link" style="display: none;">
@@ -244,6 +244,7 @@
                         <button type="button" class="btn btn-danger" id="betNo">Não</button>
                     </div>
                 </div>
+                <div id="message2" class="text-center" style="font-size: 16px; font-weight: bold;"></div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
                 </div>
@@ -328,14 +329,14 @@
             const cellEventDate = row.insertCell(1);
             const cellEventEnd = row.insertCell(2);
             const cellQuotaValue = row.insertCell(3);
-            const cellAction = row.insertCell(4); 
+            const cellAction = row.insertCell(4);
 
             cellTitle.textContent = event['TITLE'];
             cellEventDate.textContent = formatDate(event['EVENT_DATE']);
             cellEventEnd.textContent = formatDate(event['EVENT_BET_ENDS']);
             cellQuotaValue.textContent = `R$ ${parseFloat(event['QUOTA_VALUE']).toFixed(2)}`;
 
-            
+
             const detailsButton = document.createElement('button');
             detailsButton.classList.add('btn', 'btn-info');
             detailsButton.textContent = 'Detalhes';
@@ -343,16 +344,17 @@
                 showEventDetails(event);
             });
 
-            
+
             const betButton = document.createElement('button');
             betButton.classList.add('btn', 'btn-info');
             betButton.textContent = 'Bet';
+            betButton.id = event['ID']
             betButton.addEventListener('click', function () {
                 showBetModal(event);
             });
 
             cellAction.appendChild(detailsButton);
-            cellAction.appendChild(document.createTextNode(' ')); 
+            cellAction.appendChild(document.createTextNode(' '));
             cellAction.appendChild(betButton);
         }
         function showEventDetails(event) {
@@ -389,12 +391,12 @@
             });
 
             let userChoice = null;
-            betYesButton.addEventListener('click', function () {
+            betYesButton.addEventListener('click', async function () {
                 userChoice = 'Sim';
                 processBet(event, userChoice);
             });
 
-            betNoButton.addEventListener('click', function () {
+            betNoButton.addEventListener('click', async function () {
                 userChoice = 'Não';
                 processBet(event, userChoice);
             });
@@ -403,36 +405,39 @@
             myModal.show();
         }
 
-        function processBet(event, userChoice) {
-            const betQuantity = parseInt(document.getElementById('betQuantity').value, 10);
-            const totalBet = betQuantity * parseFloat(event['QUOTA_VALUE']);
+        async function processBet(event, guess) {
+            const messageElement = document.getElementById("message2");
+            const quotas_amount = parseInt(document.getElementById('betQuantity').value, 10);
+            const bet_amount = quotas_amount * parseFloat(event['QUOTA_VALUE']);
+            const event_id = event['ID']
+            const token = localStorage.getItem('authToken')
 
-            // TEM QUE COLOCAR UM SERVIDOR DE VERDADE AQUI É SÓ UMA SIMULAÇÃO
-            // MUDA AQUI QUANDO A ROTA E A TABELA FOREM CRIADOS KKKKKKKKKKKKKKKKKKKK ||||||||||||||||||||||||||||
-            fetch('http://localhost:3000/saveBet', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                //ELEMENTOS DE UMA TABELA IMAGINARIA, ISSO AQUI NÃO EXISTE ||||||||||||||||||||||||||||||||
-                body: JSON.stringify({
-                    eventId: event['ID'],
-                    betQuantity,
-                    totalBet,
-                    userChoice
+            try {
+                console.log('Entrou no try')
+                const response = await fetch('http://localhost:3000/event/bet', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        "Authorization": `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ quotas_amount, bet_amount, event_id, guess })
                 })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    alert('Aposta registrada com sucesso!');
+                console.log('Passou do fetch, Response:', response);
+                const result = await response.json();
 
-                    const myModal = new bootstrap.Modal(document.getElementById('betModal'));
-                    myModal.hide();
-                })
-                .catch(error => {
-                    alert('Erro ao registrar aposta!');
-                    console.error(error);
-                });
+                if (response.ok) {
+                    messageElement.textContent = result.message || "Aposta feita com sucesso!";
+                    messageElement.className = "success";
+                } else {
+                    messageElement.textContent = result.error || "Erro ao realizar aposta.";
+                    messageElement.className = "error";
+                }
+            } catch (error) {
+                console.error('Erro no fetch:', error);
+                messageElement.textContent = "Erro ao se comunicar com o servidor.";
+                messageElement.className = "error";
+            }
+
         }
 
 

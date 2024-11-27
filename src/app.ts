@@ -1,11 +1,12 @@
+import withdrawFundsRoute from "./routes/withdrawFundsRoute";
 import deleteEventRoute from "./routes/deleteEventRoute";
 import getEventsRoute from "./routes/getEventsRoute";
-import addFundsRoute from "./routes/addFundsRoute"
-import withdrawFundsRoute from "./routes/withdrawFundsRoute"
 import express, { Request, Response } from "express";
 import tokenAuthRoute from "./routes/tokenAuthRoute";
 import getWalletRoute from "./routes/getWalletRoute";
+import addFundsRoute from "./routes/addFundsRoute";
 import addEventRoute from "./routes/addEventRoute";
+import betEventRoute from "./routes/betEventRoute";
 import signUpRoute from "./routes/signUpRoute";
 import loginRoute from "./routes/loginRoute";
 import bodyParser from "body-parser";
@@ -32,6 +33,7 @@ app.use("/account", withdrawFundsRoute);
 app.use("/event", addEventRoute);
 app.use("/event", deleteEventRoute);
 app.use("/event", getEventsRoute);
+app.use("/event", betEventRoute);
 
 
 app.get("/homepage", (req: Request, res: Response) => {
