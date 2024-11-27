@@ -24,7 +24,8 @@ async function loadWallet() {
         });
         const walletInfo = await response.json();
         const wallet = walletInfo.wallet
-        const walletBalance = wallet[0]['BALANCE']
+        const walletBalanceCents = wallet[0]['BALANCE']
+        const walletBalance = walletBalanceCents / 100
         const walletHistory = walletInfo.walletHistory
 
         if (response.ok) {
@@ -56,9 +57,11 @@ function showWalletHistory(history) {
     const cellId = row.insertCell(0);
     const cellType = row.insertCell(1);
     const cellAmount = row.insertCell(2);
+    const amountCents = history['AMOUNT']
+    const amount = amountCents / 100;
 
 
     cellId.textContent = history['ID'];
     cellType.textContent = history['TRANSACTION_TYPE'];
-    cellAmount.textContent = `R$${history['AMOUNT']}`;
+    cellAmount.textContent = `R$${amount.toFixed(2)}`;
 }
