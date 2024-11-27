@@ -3,20 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script src="./scripts/login.js" defer></script>
+    <link rel="stylesheet" href="loginCadastro.css">
+    <title>Login - Apostas Online</title>
+    <style>
+        /* Estilização do corpo da página */
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-image: url("./telaFundo.jpeg");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+        }
+    </style>
 </head>
 <body>
-    <h1>Login</h1>
-    <form id="loginForm">
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
-        <br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <br>
-        <button type="submit">Login</button>
-    </form>
-    <p id="message"></p>
+    <section>
+        <form id="loginForm">
+            <h1>Login</h1>
+            <div class="inputbox">
+                <input type="text" id="email" name="email" required>
+                <label for="username">Usuário</label>
+                <ion-icon name="person-outline"></ion-icon>
+            </div>
+            <div class="inputbox">
+                <input type="password" id="password" name="password" required>
+                <label for="password">Senha</label>
+                <ion-icon name="lock-closed-outline"></ion-icon>
+            </div>
+            <p id="message"></p>
+            <button type="submit">Iniciar</button>
+            
+            <div class="register">
+                <p>Não tem uma conta? <a href="http://localhost:3000/signUp">Registrar-se</a></p>
+            </div>
+        </form>
+    </section>
 </body>
 </html>
