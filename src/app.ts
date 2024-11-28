@@ -1,4 +1,5 @@
 import withdrawFundsRoute from "./routes/withdrawFundsRoute";
+import evaluateEventRoute from "./routes/evaluateEventRoute";
 import deleteEventRoute from "./routes/deleteEventRoute";
 import getEventsRoute from "./routes/getEventsRoute";
 import express, { Request, Response } from "express";
@@ -22,6 +23,8 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "../public")));
 
 app.use("/auth", tokenAuthRoute);
+
+app.use("/mod", evaluateEventRoute);
 
 app.use("/account", signUpRoute);
 app.use("/account", loginRoute);
