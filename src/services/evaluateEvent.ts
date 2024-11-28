@@ -2,6 +2,10 @@ import { ConnectionHandler } from '../database/connection';
 import { auth } from '../microServices/tokenAuth';
 import { EvaluateInfo } from "../models/EvaluateInfo";
 import OracleDB from "oracledb";
+import { sendMail } from "../microServices/mailService";
+import fs from "fs";
+import path from "path";
+
 
 export const evaluateEvent = async (connection: OracleDB.Connection, evaluateInfo: EvaluateInfo, token: string): Promise<{ success: boolean; error?: string; }> => {
     try {
@@ -16,7 +20,7 @@ export const evaluateEvent = async (connection: OracleDB.Connection, evaluateInf
         }
         const event_id = evaluateInfo.event_id
         const avaliation = evaluateInfo.avaliation
-        const motive = evaluateInfo.motive
+        const motive: any = evaluateInfo.motive
         if (!event_id || !avaliation) {
             return { success: false, error: "Campos faltando." }
         }
@@ -40,12 +44,44 @@ export const evaluateEvent = async (connection: OracleDB.Connection, evaluateInf
                 [actualDate, event_id]
             )
         }
-        
+
         if (avaliation == 'Reprovado') {
+            const getOwner: any = await connection.execute(
+                `SELECT owner_id, title FROM events WHERE id = :event_id`,
+                [event_id],
+                { outFormat: OracleDB.OUT_FORMAT_OBJECT }
+            )
+            const ownerId = getOwner.rows[0]['OWNER_ID']
+            const eventTitle = getOwner.rows[0]['TITLE']
+            console.log('ID DONO DO EVENTO:', ownerId)
+
+            const getOwnerEmail: any = await connection.execute(
+                `SELECT email FROM accounts WHERE id = :ownerId`,
+                [ownerId],
+                { outFormat: OracleDB.OUT_FORMAT_OBJECT }
+            )
+
+            const ownerEmail = getOwnerEmail.rows[0]['EMAIL']
+            console.log('EMAIL DONO DO EVENTO:', ownerEmail)
+
             await connection.execute(
                 `UPDATE events SET event_status = 'Reprovado' WHERE id = :event_id`,
                 [event_id]
             )
+            const templatePath = path.join(__dirname, '../../public/mailMessage.html');
+            let mailTemplate = fs.readFileSync(templatePath, 'utf-8');
+
+            mailTemplate = mailTemplate
+                .replace('{{eventTitle}}', eventTitle)
+                .replace('{{motive}}', motive);
+                
+            // enviar email para o dono do evento
+            const from: string = 'pedrohkachan';
+            const to: string = ownerEmail;
+            const subject: string = `Evento reprovado: ${eventTitle}`;
+
+
+            sendMail(from, to, subject, mailTemplate);
         }
 
 
