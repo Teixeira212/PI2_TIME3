@@ -1,12 +1,10 @@
 import { ConnectionHandler } from '../database/connection';
-import { deleteEvent } from '../services/deleteEvent';
-import { Event } from '../models/Event'; 
+import { getMyEvents } from '../services/getMyEvents';
 import express from 'express';
 
 const router = express.Router();
 
-router.delete('/deleteEvent', async (req, res) => {
-    const event: Event = req.body;
+router.get('/getMyEvents', async (req, res) => {
     const { authorization } = req.headers
     const token = authorization?.split(' ')[1]
     if(!token) {
@@ -15,11 +13,9 @@ router.delete('/deleteEvent', async (req, res) => {
     }
 
     try {
-        let result = await ConnectionHandler.connectAndExecute(connection => deleteEvent(connection, event, token))
-        if (result.success) {
-            res.status(201).json({
-                message: `Evento deletado com sucesso.`
-            });
+        let result = await ConnectionHandler.connectAndExecute(connection => getMyEvents(connection, token))
+        if (result.success && result.data) {
+            res.status(201).json(result.data);
         } else {
             res.status(400).json({ error: result.error })
         }

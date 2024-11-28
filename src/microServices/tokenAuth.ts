@@ -25,7 +25,7 @@ export const auth = async (connection: OracleDB.Connection, token: string) : Pro
 
         return { success: true, userId: userId, isMod: isModerator }
     } catch (error: unknown) {
-        console.error("Erro ao verifiar token: ", error);
+        console.error("Erro ao verificar token: ", error);
         return { success: false, error: "Erro desconhecido ao verificar token." };
     }
 }

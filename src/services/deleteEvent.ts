@@ -15,22 +15,23 @@ export const deleteEvent = async (connection: OracleDB.Connection, event: Event,
             return { success: false, error: "Não é possível deletar evento como Moderador." }
         }
 
-        if (!event.title) {
+        const eventId = event.id
+        if (!eventId) {
             return { success: false, error: "Campos faltando." };
         }
-        console.log(event.title)
+        console.log('ID DO EVENTO A SER CANCELADO:', eventId)
         let getEvent: any = await connection.execute(
-            `SELECT COUNT(title) FROM events WHERE owner_id = :userId AND title = :title`,
-            [userId, event.title]
+            `SELECT COUNT(*) FROM events WHERE owner_id = :userId AND id = :eventId`,
+            [userId, eventId]
         )
-        const eventExists = getEvent.rows[0]['COUNT(TITLE)']
+        const eventExists = getEvent.rows[0]['COUNT(*)']
         if (eventExists < 1) {
             return { success: false, error: "Evento não encontrado, verifique se o evento existe."}
         }
 
         await connection.execute(
-            `UPDATE events SET event_status = 'Cancelado' WHERE title = :title`,
-            [event.title]
+            `UPDATE events SET event_status = 'Cancelado' WHERE id = :eventId`,
+            [eventId]
         )
 
         connection.commit()

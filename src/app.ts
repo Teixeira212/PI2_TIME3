@@ -1,6 +1,7 @@
 import withdrawFundsRoute from "./routes/withdrawFundsRoute";
 import evaluateEventRoute from "./routes/evaluateEventRoute";
 import deleteEventRoute from "./routes/deleteEventRoute";
+import getMyEventsRoute from "./routes/getMyEventsRoute";
 import getEventsRoute from "./routes/getEventsRoute";
 import express, { Request, Response } from "express";
 import tokenAuthRoute from "./routes/tokenAuthRoute";
@@ -36,6 +37,7 @@ app.use("/account", withdrawFundsRoute);
 app.use("/event", addEventRoute);
 app.use("/event", deleteEventRoute);
 app.use("/event", getEventsRoute);
+app.use("/event", getMyEventsRoute);
 app.use("/event", betEventRoute);
 
 
@@ -45,6 +47,10 @@ app.get("/homepage", (req: Request, res: Response) => {
 
 app.get("/wallet", (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, "../public/wallet.html"));
+});
+
+app.get("/myEvents", (req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, "../public/myEvents.html"));
 });
 
 app.get("/signUp", (req: Request, res: Response) => {

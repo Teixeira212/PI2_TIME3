@@ -8,6 +8,7 @@ function verifyToken() {
 
 function logout() {
     localStorage.clear();
+    window.location.href = "/homepage";
 }
 
 function formatDateInput(input) {
