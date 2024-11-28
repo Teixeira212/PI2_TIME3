@@ -2,10 +2,11 @@ import withdrawFundsRoute from "./routes/withdrawFundsRoute";
 import evaluateEventRoute from "./routes/evaluateEventRoute";
 import deleteEventRoute from "./routes/deleteEventRoute";
 import getMyEventsRoute from "./routes/getMyEventsRoute";
+import finishEventRoute from "./routes/finishEventRoute";
 import getEventsRoute from "./routes/getEventsRoute";
-import express, { Request, Response } from "express";
 import tokenAuthRoute from "./routes/tokenAuthRoute";
 import getWalletRoute from "./routes/getWalletRoute";
+import express, { Request, Response } from "express";
 import addFundsRoute from "./routes/addFundsRoute";
 import addEventRoute from "./routes/addEventRoute";
 import betEventRoute from "./routes/betEventRoute";
@@ -26,6 +27,7 @@ app.use(express.static(path.join(__dirname, "../public")));
 app.use("/auth", tokenAuthRoute);
 
 app.use("/mod", evaluateEventRoute);
+app.use("/mod", finishEventRoute);
 
 app.use("/account", signUpRoute);
 app.use("/account", loginRoute);
