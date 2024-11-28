@@ -22,4 +22,6 @@ Instruções:
 - É necessário inicializar o banco de dados (criação das tabelas) para utilizar a aplicação. No terminal utilize o comando "npm run setup-db";
 - Para criar o build, no terminal utilize o comando "npm run build";
 - E por fim, para que o servidor comece a rodar deve-se escrever no terminal utilize o comando "npm run dev";
-- Vá ao seu navegador e escreva na barra de endereço o URL "localhost:3000/homepage" para acessar a homepage do site.
+- Vá ao seu navegador e escreva na barra de endereço o URL "localhost:3000/homepage" para acessar a homepage do site;
+- Moderadores devem ser adicionados manualmente pelo banco de dados;
+- Moderadores não tem telas, apenas rotas.
