@@ -17,7 +17,7 @@ router.post('/evaluateEvent', async (req, res) => {
 
     try {
         let result = await ConnectionHandler.connectAndExecute(connection => evaluateEvent(connection, evaluateInfo, token))
-        if (result.success && result.data) {
+        if (result.success) {
             res.status(201).json({
                 message: `Evento avaliado com sucesso.`
             });
