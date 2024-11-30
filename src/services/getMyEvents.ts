@@ -12,7 +12,7 @@ export const getMyEvents = async (connection: OracleDB.Connection, token: string
         const isMod = authResult.isMod;
 
         const result = await connection.execute(
-            `SELECT * FROM events WHERE owner_id = :userId`,
+            `SELECT * FROM events WHERE owner_id = :userId ORDER BY id DESC`,
             [userId],
             { outFormat: OracleDB.OUT_FORMAT_OBJECT }
         );

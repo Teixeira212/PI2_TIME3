@@ -25,3 +25,18 @@ Instruções:
 - Vá ao seu navegador e escreva na barra de endereço o URL "localhost:3000/homepage" para acessar a homepage do site;
 - Moderadores devem ser adicionados manualmente pelo banco de dados;
 - Moderadores não tem telas, apenas rotas.
+
+Comandos de moderador (POSTMAN):
+/mod/evaluateEvent - Campos necessários para avaliar evento:
+event_id, avaliation ('Aprovado' ou 'Reprovado'), motive (Somente se reprovar o evento. Inserir motivo da reprova);
+
+/mod/finishEvent - Campos necessário para finalizar evento:
+id (ID do evento), result (Resultado do evento 'Sim' ou 'Não').
+
+Informações .env:
+JWT_PASS= (Coloque uma palavra ou sequência de caracteres aleatórios);
+MAIL_HOST="" (Host do email que ira utilizar para enviar os emails, ex: gmail, outlook...);
+MAIL_USERNAME="" (Username do email que ira utilizar para enviar os emails, ex: joao@gmail.com, coloque apenas o joao);
+MAIL_PASSWORD="" (Senha de acesso que deve ser gerada no google para acessar os serviços do email se fazer login)
+
+Siga o exemplo do .env.example para que tudo funcione corretamente.
